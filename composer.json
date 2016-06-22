@@ -2,6 +2,7 @@
 	"name": "monetra/module-monetra",
 	"type": "magento2-module",
 	"description": "A Magento 2 module for processing payments through a Monetra server",
+	"license": "MIT",
 	"keywords": [
 		"monetra",
 		"magento",
@@ -12,7 +13,7 @@
 	],
 	"support": {
 		"email": "support@monetra.com"
-	}
+	},
 	"require": {
 		"php": "~5.5.22|~5.6.0|~7.0.0",
 		"magento/framework": "100.0.*",
