@@ -1,22 +1,32 @@
 #Monetra Module for Magento 2
 
-## Overview
-
 The Monetra Module for Magento 2 allows you to easily configure your Magento instance to process payments through a
 Monetra server. The module utilizes the Monetra Post (Client Ticket Request) protocol, sending payment information directly to Monetra
 so that sensitive data like credit card numbers are never sent to your Magento server.
 
+## How It Works
+
 The basic process of the Client Ticket Request payment method (provided by this module) is as follows:
 
 1. When the payment form is submitted, the sensitive card data in the form is sent directly to the Monetra server (nothing is sent to Magento yet).
-2. The Monetra server responds with a single-use, numeric "ticket" associated with the submitted card data.
+2. The Monetra server responds with a single-use "ticket" associated with the submitted card data.
 3. This ticket is submitted along with the rest of the payment form data (except for the sensitive card data) to Magento.
 4. Magento sends a `sale` transaction to the Monetra server, providing the ticket instead of actual card data.
+
+The module does this work for you. All you need to do is install and configure it.
+
+## Installation
+
+The module can be installed with Composer. From the root directory of your Magento 2 installation, run the following commands:
+```
+composer require monetra/monetra_magento2
+php bin/magento setup:upgrade
+```
 
 ## Configuration
 
 Once the Monetra Module is installed on your Magento instance, you will need to provide some configuration values for it
-in the Magento admin. Nativate to Stores => Configuration => Sales => Payment Methods. You should see "Monetra Client Ticket Request"
+in the Magento admin. Navigate to Stores => Configuration => Sales => Payment Methods. You should see "Monetra Client Ticket Request"
 in the list of payment methods. Click on the arrow icon to expand the configuration option list.
 
 - **Enabled**: Must be set to "Yes" in order to use the Monetra Client Ticket Request payment method.
