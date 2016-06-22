@@ -1,0 +1,73 @@
+<?php
+
+$code = $block->escapeHtml($block->getMethodCode());
+$ccExpMonth = $block->getInfoData('cc_exp_month');
+$ccExpYear = $block->getInfoData('cc_exp_year');
+?>
+<fieldset class="admin__fieldset payment-method" id="payment_form_<?php echo $code; ?>"
+		style="display:none">
+	<div class="field-number admin__field _required">
+		<label class="admin__field-label" for="<?php echo $code; ?>_cc_number">
+			<span><?php echo $block->escapeHtml(__('Credit Card Number')); ?></span>
+		</label>
+		<div class="admin__field-control">
+			<input type="text" id="<?php echo $code; ?>_cc_number"
+				title="<?php echo $block->escapeHtml(__('Credit Card Number')); ?>" class="admin__control-text validate-cc-number"
+				value="<?php echo $block->getInfoData('cc_number'); ?>"/>
+		</div>
+	</div>
+	<div class="field-date admin__field _required">
+		<label class="admin__field-label" for="<?php echo $code; ?>_expiration">
+			<span><?php echo $block->escapeHtml(__('Expiration Date')); ?></span>
+		</label>
+		<div class="admin__field-control">
+			<select id="<?php echo $code ?>_expiration"
+					class="admin__control-select admin__control-select-month validate-cc-exp required-entry">
+				<?php foreach ($block->getCcMonths() as $k => $v): ?>
+					<option value="<?php echo $block->escapeHtml($k); ?>"
+							<?php if ($k == $ccExpMonth): ?>selected="selected"<?php endif ?>>
+						<?php echo $block->escapeHtml($v); ?>
+					</option>
+				<?php endforeach; ?>
+			</select>
+			<select id="<?php echo $code ?>_expiration_yr"
+					class="admin__control-select admin__control-select-year required-entry">
+				<?php foreach ($block->getCcYears() as $k => $v): ?>
+					<option value="<?php echo $k ? $block->escapeHtml($k) : '' ?>"
+							<?php if ($k == $ccExpYear): ?>selected="selected"<?php endif ?>>
+						<?php echo $block->escapeHtml($v); ?>
+					</option>
+				<?php endforeach ?>
+			</select>
+		</div>
+	</div>
+	<?php if ($block->hasVerification()): ?>
+		<div class="field-number required admin__field _required">
+			<label class="admin__field-label" for="<?php echo $code; ?>_cc_cid">
+				<span><?php echo $block->escapeHtml(__('Card Verification Number')); ?></span>
+			</label>
+			<div class="admin__field-control">
+				<input type="text" title="<?php echo $block->escapeHtml(__('Card Verification Number')); ?>"
+					class="required-entry validate-cc-cvn admin__control-cvn admin__control-text"
+					id="<?php echo $code; ?>_cc_cid"
+					value="<?php echo $block->getInfoData('cc_cid') ?>"/>
+			</div>
+		</div>
+	<?php endif; ?>
+
+	<div id="monetra_client_ticket_request_fields" data-url="<?php echo $block->getMonetraUrl() ?>">
+		<input type="hidden" name="ticket_username" value="<?php echo $block->getMonetraUsername() ?>"/>
+		<input type="hidden" name="ticket_action" value="<?php echo $block->getMonetraAction() ?>"/>
+		<input type="hidden" name="ticket_admin" value="<?php echo $block->getMonetraAdmin() ?>"/>
+		<input type="hidden" name="ticket_monetra_req_sequence" value="<?php echo $block->getMonetraSequence() ?>"/>
+		<input type="hidden" name="ticket_monetra_req_timestamp" value="<?php echo $block->getMonetraTimestamp() ?>"/>
+		<input type="hidden" name="ticket_monetra_req_hmacsha256" value="<?php echo $block->getMonetraHmac() ?>"/>
+	</div>
+
+	<div id="monetra_client_ticket_response_fields"></div>
+
+</fieldset>
+
+<script>
+	require(["Monetra_Monetra/js/client-ticket"]);
+</script>

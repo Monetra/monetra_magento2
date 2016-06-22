@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+	<default>
+		<payment>
+			<monetra_client_ticket>
+				<active>1</active>
+				<cctypes>AE,VI,MC,DI,JCB,OT</cctypes>
+				<email_customer>0</email_customer>
+				<model>Monetra\Monetra\Model\ClientTicket</model>
+				<order_status>processing</order_status>
+				<payment_action>authorize</payment_action>
+				<title>Credit Card (Monetra Client Ticket Request)</title>
+				<currency>USD</currency>
+			</monetra_client_ticket>
+		</payment>
+	</default>
+</config>

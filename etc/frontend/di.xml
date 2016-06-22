@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+	<type name="Magento\Payment\Model\CcGenericConfigProvider">
+		<arguments>
+			<argument name="methodCodes" xsi:type="array">
+				<item name="ticket" xsi:type="const">Monetra\Monetra\Model\ClientTicket::METHOD_CODE</item>
+			</argument>
+		</arguments>
+	</type>
+	<type name="Magento\Checkout\Model\CompositeConfigProvider">
+		<arguments>
+			<argument name="configProviders" xsi:type="array">
+				<item name="monetra_cc_config_provider" xsi:type="object">Monetra\Monetra\Model\ConfigProvider</item>
+			</argument>
+		</arguments>
+	</type>
+</config>
