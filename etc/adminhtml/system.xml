@@ -10,7 +10,7 @@
 				</field>
 				<field id="payment_action" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
 					<label>Payment Action</label>
-					<source_model>Magento\Authorizenet\Model\Source\PaymentAction</source_model>
+					<source_model>Monetra\Monetra\Model\Source\PaymentAction</source_model>
 				</field>
 				<field id="title" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
 					<label>Title</label>
