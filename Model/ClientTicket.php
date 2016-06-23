@@ -104,20 +104,21 @@ class ClientTicket extends \Magento\Payment\Model\Method\Cc
 
 	public function capture(\Magento\Payment\Model\InfoInterface $payment, $amount)
 	{
+		$order_num = $payment->getOrder()->getIncrementId();
 		try {
 			$monetra = new MonetraInterface($this->getMonetraConfigData());
 
 			$ttid = $payment->getParentTransactionId();
 
 			if (!empty($ttid)) {
-				$response = $monetra->capture($ttid);
+				$response = $monetra->capture($ttid, $order_num);
 			} else {
 				if (!$this->hmacIsValid()) {
 					$this->_logger->error('HMAC SHA-256 from Monetra client ticket request failed verification.');
 					throw new LocalizedException(__('Verification of payment information failed.'));
 				}
 				$ticket = $this->getInfoInstance()->getAdditionalInformation('ticket');
-				$response = $monetra->sale($ticket, $amount);
+				$response = $monetra->sale($ticket, $amount, $order_num);
 			}
 		} catch (MonetraException $e) {
 			$this->_logger->critical("Error occurred while attempting Monetra capture. Details: " . $e->getMessage());

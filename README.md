@@ -1,6 +1,6 @@
 #Monetra Module for Magento 2
 
-The Monetra Module for Magento 2 allows you to easily configure your Magento instance to process payments through a
+The Monetra Module for Magento 2 allows you to easily configure your Magento 2 instance to process payments through a
 Monetra server. The module utilizes the Monetra Post (Client Ticket Request) protocol, sending payment information directly to Monetra
 so that sensitive data like credit card numbers are never sent to your Magento server.
 

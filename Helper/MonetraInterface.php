@@ -41,20 +41,22 @@ class MonetraInterface
 		]);
 	}
 
-	public function capture($ttid)
+	public function capture($ttid, $order_num)
 	{
 		return $this->request([
 			'action' => 'capture',
-			'ttid' => $ttid
+			'ttid' => $ttid,
+			'ordernum' => $order_num
 		]);
 	}
 
-	public function sale($ticket, $amount)
+	public function sale($ticket, $amount, $order_num)
 	{
 		return $this->request([
 			'action' => 'sale',
 			'cardshieldticket' => $ticket,
-			'amount' => $amount
+			'amount' => $amount,
+			'ordernum' => $order_num
 		]);
 	}
 
