@@ -32,18 +32,6 @@
 					<label>Monetra Password</label>
 					<backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
 				</field>
-				<field id="currency" translate="label" type="select" sortOrder="110" showInDefault="1" showInWebsite="1" showInStore="0">
-					<label>Accepted Currency</label>
-					<source_model>Magento\Config\Model\Config\Source\Locale\Currency</source_model>
-				</field>
-				<field id="email_customer" translate="label" type="select" sortOrder="130" showInDefault="1" showInWebsite="1" showInStore="0">
-					<label>Email Customer</label>
-					<source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-				</field>
-				<field id="merchant_email" translate="label" type="text" sortOrder="140" showInDefault="1" showInWebsite="1" showInStore="0">
-					<label>Merchant's Email</label>
-					<validate>validate-email</validate>
-				</field>
 				<field id="cctypes" translate="label" type="multiselect" sortOrder="150" showInDefault="1" showInWebsite="1" showInStore="0">
 					<label>Credit Card Types</label>
 					<source_model>Monetra\Monetra\Model\Source\CcType</source_model>

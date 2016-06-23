@@ -8,7 +8,7 @@ so that sensitive data like credit card numbers are never sent to your Magento s
 
 The basic process of the Client Ticket Request payment method (provided by this module) is as follows:
 
-1. When the payment form is submitted, the sensitive card data in the form is sent directly to the Monetra server (nothing is sent to Magento yet).
+1. When the payment form is submitted, the sensitive card data in the form is posted directly to the Monetra server via AJAX (nothing is sent to Magento yet).
 2. The Monetra server responds with a single-use "ticket" associated with the submitted card data.
 3. This ticket is submitted along with the rest of the payment form data (except for the sensitive card data) to Magento.
 4. Magento sends a `sale` transaction to the Monetra server, providing the ticket instead of actual card data.
@@ -37,7 +37,7 @@ in the list of payment methods. Click on the arrow icon to expand the configurat
 
 - **New Order Status**: The default status that will be assigned to newly placed orders.
 
-- **Monetra Host**: Hostname (FQDN) for the Monetra server that your Magento instance will be sending transactions to.
+- **Monetra Host**: Hostname (FQDN) of the Monetra server that your Magento instance will be sending transactions to.
 
 - **Monetra Port**: Port number on the Monetra server that transactions will be sent to. Usually this will be 8665.
 
@@ -47,6 +47,6 @@ in the list of payment methods. Click on the arrow icon to expand the configurat
 
 - **Credit Card Types**: The credit card types that will be accepted by this payment method.
 
-- **Credit Card Verification**: If "Yes", payment form will include field for card verification value (CVV), which will be sent to the Monetra server along with the other payment fields to generate the ticket (CVV will not be sent to your Magento server).
+- **Credit Card Verification**: If "Yes", payment form will include a field for card verification value (CVV), which will be sent to the Monetra server along with the other payment fields to generate the ticket (CVV will not be sent to your Magento server).
 
 - **Sort Order**: Determines where this payment method will appear in relation to other payment methods on the checkout page. For example, if the sort order for this method is set to 1, and the sort order for another payment method is set to 2, this one will appear above the other one on the list of payment method options.
