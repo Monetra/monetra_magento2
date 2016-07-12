@@ -1,6 +1,7 @@
 <?php
 
 namespace Monetra\Monetra\Helper;
+use \Monetra\Monetra\Helper\MonetraException;
 
 class MonetraInterface
 {
