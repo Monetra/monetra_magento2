@@ -4,16 +4,13 @@ namespace Monetra\Monetra\Helper;
 
 class ClientTicketData extends \Magento\Framework\App\Helper\AbstractHelper
 {
-	protected $_scopeConfig;
 	private $_encryptor;
 
 	public function __construct(
 		\Magento\Framework\App\Helper\Context $context,
-		\Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
 		\Magento\Framework\Encryption\EncryptorInterface $encryptor
 	) {
 		parent::__construct($context);
-		$this->_scopeConfig = $scopeConfig;
 		$this->_encryptor = $encryptor;
 	}
 
@@ -41,6 +38,6 @@ class ClientTicketData extends \Magento\Framework\App\Helper\AbstractHelper
 
 	private function getConfigValue($key)
 	{
-		return $this->_scopeConfig->getValue('payment/monetra_client_ticket/' . $key, \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+		return $this->scopeConfig->getValue('payment/monetra_client_ticket/' . $key, \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
 	}
 }
