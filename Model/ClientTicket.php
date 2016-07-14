@@ -11,8 +11,6 @@ class ClientTicket extends \Magento\Payment\Model\Method\Cc
 {
 	const METHOD_CODE = 'monetra_client_ticket';
 
-	const USER_FACING_ERROR_MESSAGE = 'We experienced a problem while attempting to process your payment.';
-
 	public $_code = self::METHOD_CODE;
 
 	protected $_isGateway = true;
@@ -86,14 +84,14 @@ class ClientTicket extends \Magento\Payment\Model\Method\Cc
 			$response = $monetra->authorize($ticket, $amount);
 		} catch (MonetraException $e) {
 			$this->_logger->critical("Error occurred while attempting Monetra authorization. Details: " . $e->getMessage());
-			throw new LocalizedException(__(self::USER_FACING_ERROR_MESSAGE));
+			throw new LocalizedException(__($this->_scopeConfig->getValue('payment/monetra_client_ticket/user_facing_error_message')));
 		}
 
 		if ($response['code'] !== 'AUTH') {
 			$this->_logger->info(
 				sprintf('Monetra authorization failed for TTID %d. Verbiage: %s', $response['ttid'], $response['verbiage'])
 			);
-			throw new LocalizedException(__('Authorization was denied.'));
+			throw new LocalizedException(__($this->_scopeConfig->getValue('payment/monetra_client_ticket/user_facing_deny_message')));
 		}
 
 		$payment->setTransactionId($response['ttid']);
@@ -122,13 +120,13 @@ class ClientTicket extends \Magento\Payment\Model\Method\Cc
 			}
 		} catch (MonetraException $e) {
 			$this->_logger->critical("Error occurred while attempting Monetra capture. Details: " . $e->getMessage());
-			throw new LocalizedException(__(self::USER_FACING_ERROR_MESSAGE));
+			throw new LocalizedException(__($this->_scopeConfig->getValue('payment/monetra_client_ticket/user_facing_error_message')));
 		}
 		if ($response['code'] !== 'AUTH') {
 			$this->_logger->info(
 				sprintf('Monetra capture failed for TTID %d. Verbiage: %s', $response['ttid'], $response['verbiage'])
 			);
-			throw new LocalizedException(__('Capture request failed.'));
+			throw new LocalizedException(__($this->_scopeConfig->getValue('payment/monetra_client_ticket/user_facing_deny_message')));
 		}
 		return $this;
 	}
@@ -142,7 +140,7 @@ class ClientTicket extends \Magento\Payment\Model\Method\Cc
 			$response = $monetra->void($ttid);
 		} catch (MonetraException $e) {
 			$this->_logger->critical("Error occurred while attempting Monetra void. Details: " . $e->getMessage());
-			throw new LocalizedException(__(self::USER_FACING_ERROR_MESSAGE));
+			throw new LocalizedException(__($this->_scopeConfig->getValue('payment/monetra_client_ticket/user_facing_error_message')));
 		}
 
 		if ($response['code'] !== 'AUTH') {
@@ -164,7 +162,7 @@ class ClientTicket extends \Magento\Payment\Model\Method\Cc
 			$response = $monetra->refund($ttid, $amount);
 		} catch (MonetraException $e) {
 			$this->_logger->critical("Error occurred while attempting Monetra refund. Details: " . $e->getMessage());
-			throw new LocalizedException(__(self::USER_FACING_ERROR_MESSAGE));
+			throw new LocalizedException(__($this->_scopeConfig->getValue('payment/monetra_client_ticket/user_facing_error_message')));
 		}
 
 		if ($response['code'] !== 'AUTH') {

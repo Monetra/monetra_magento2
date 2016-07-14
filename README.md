@@ -45,6 +45,10 @@ in the list of payment methods. Click on the arrow icon to expand the configurat
 
 - **Monetra Password**: The password of the Monetra user (for authentication on the Monetra server). Stored encrypted via `Magento\Config\Model\Config\Backend\Encrypted`
 
+- **User-Facing Payment Denial Message**: The message that the user will see during the checkout process if their provided credit card is denied for any reason.
+
+- **User-Facing Payment Error Message**: The message that the user will see during the checkout process if an internal error within the module prevents the sale from successfully completing.
+
 - **Credit Card Types**: The credit card types that will be accepted by this payment method.
 
 - **Credit Card Verification**: If "Yes", payment form will include a field for card verification value (CVV), which will be sent to the Monetra server along with the other payment fields to generate the ticket (CVV will not be sent to your Magento server).

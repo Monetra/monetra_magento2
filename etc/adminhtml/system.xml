@@ -40,6 +40,12 @@
 					<label>Credit Card Verification</label>
 					<source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
 				</field>
+				<field id="user_facing_deny_message" translate="label" type="textarea" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="0">
+					<label>User-Facing Payment Denial Message</label>
+				</field>
+				<field id="user_facing_error_message" translate="label" type="textarea" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="0">
+					<label>User-Facing Payment Error Message</label>
+				</field>
 				<field id="sort_order" translate="label" type="text" sortOrder="210" showInDefault="1" showInWebsite="1" showInStore="0">
 					<label>Sort Order</label>
 					<frontend_class>validate-number</frontend_class>
