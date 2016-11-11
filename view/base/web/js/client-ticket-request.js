@@ -1,9 +1,60 @@
 define(
 	[
 		'jquery',
-		'Magento_Ui/js/modal/alert',
+		'Magento_Ui/js/modal/alert'
 	],
 	function($, alert) {
+
+		var startReloadInterval = function() {
+			var checkout_reload_message_content =
+				'For your security, please complete the checkout process in the next <span id="checkout-reload-timer"></span>. ' +
+				'If you do not, any information that has been entered on this page will be cleared.';
+			
+			/* Actual HMAC timeout is 15 minutes, setting this to 1 minute less */
+			var hmac_timeout_seconds = 840000;
+			
+			/* Warning will appear 5 minutes before auto-reload will be triggered */
+			var reload_warn_seconds = 540000;
+			
+			var now = new Date().getTime();
+			var reload_expire_time = now + hmac_timeout_seconds;
+			var reload_warn_time = now + reload_warn_seconds;
+			var reload_warning_is_visible = false;
+			var checkout_reload_timer;
+			var reload_interval;
+
+			reload_interval = setInterval(function() {
+				var current_time = new Date().getTime();
+				var total_seconds_left;
+				var minutes_left;
+				var seconds_left;
+				if (current_time >= reload_expire_time) {
+					clearInterval(reload_interval);
+					window.location.reload();
+					return;
+				} else if (current_time < reload_expire_time && current_time >= reload_warn_time) {
+					total_seconds_left = Math.ceil((reload_expire_time - current_time)/1000);
+					minutes_left = String(Math.floor(total_seconds_left/60));
+					seconds_left = String(total_seconds_left % 60);
+					if (minutes_left.length === 1) {
+						minutes_left = "0" + minutes_left;
+					}
+					if (seconds_left.length === 1) {
+						seconds_left = "0" + seconds_left;
+					}
+					if (!reload_warning_is_visible) {
+						$('#checkout-reload-message').html(checkout_reload_message_content);
+						checkout_reload_timer = $('#checkout-reload-timer');
+						reload_warning_is_visible = true;
+					}
+					if (reload_warning_is_visible) {
+						checkout_reload_timer.html(minutes_left + ':' + seconds_left);
+					}
+				}
+			}, 1000);
+		};
+
+		startReloadInterval();
 
 		var alert_options = {
 			title: 'Payment Error',
