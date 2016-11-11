@@ -7,7 +7,8 @@ define(
 
 		var startReloadInterval = function() {
 			var checkout_reload_message_content =
-				'For your security, please complete the checkout process in the next <span id="checkout-reload-timer"></span>. ' +
+				'For your security, please complete the checkout process in the next ' + 
+				'<span style="color:#FF0000;" id="checkout-reload-timer"></span>. ' +
 				'If you do not, any information that has been entered on this page will be cleared.';
 			
 			/* Actual HMAC timeout is 15 minutes, setting this to 1 minute less */
