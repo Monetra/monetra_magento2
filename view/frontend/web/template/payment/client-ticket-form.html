@@ -9,6 +9,11 @@
 		</label>
 	</div>
 	<div class="payment-method-content">
+		<!-- Container for HMAC timeout reload warning -->
+		<div>
+			<strong id="checkout-reload-message"></strong>
+		</div>
+		<br />
 		<!-- ko foreach: getRegion('messages') -->
 		<!-- ko template: getTemplate() --><!-- /ko -->
 		<!--/ko-->
