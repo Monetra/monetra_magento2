@@ -4,14 +4,41 @@
 		<payment>
 			<monetra_client_ticket>
 				<active>0</active>
-				<cctypes>AE,VI,MC,DI,JCB,OT</cctypes>
-				<model>Monetra\Monetra\Model\ClientTicket</model>
-				<order_status>processing</order_status>
-				<payment_action>authorize</payment_action>
+				<test_mode>1</test_mode>
 				<title>Credit Card (Monetra Client Ticket Request)</title>
-				<user_facing_deny_message>There was a problem with the provided credit card. Please try a different one or contact support for more information.</user_facing_deny_message>
-				<user_facing_error_message>We experienced a problem while attempting to process your payment. Please contact support for more information.</user_facing_error_message>
+
+				<liveserver>
+					<host></host>
+					<port>443</port>
+
+					<username></username>
+					<password></password>
+				</liveserver>
+				<testserver>
+					<host>testbox.monetra.com</host>
+					<port>443</port>
+
+					<username>test_ecomm:public</username>
+					<password>publ1ct3st</password>
+				</testserver>
+				<transactions>
+					<cctypes>AE,VI,MC,DI,JCB,OT</cctypes>
+					<model>Monetra\Monetra\Model\ClientTicket</model>
+					<order_status>processing</order_status>
+					<payment_action>authorize</payment_action>
+					<useccv>1</useccv>
+					<useavv>1</useavv>
+					<user_facing_deny_message>There was a problem with the provided credit card. Please try a different one or contact support for more information.</user_facing_deny_message>
+					<user_facing_error_message>We experienced a problem while attempting to process your payment. Please contact support for more information.</user_facing_error_message>
+				</transactions>
+				<connection>
+					<connection_type>TLS</connection_type>
+					<connection_ciphers></connection_ciphers>
+					<verify_peername>1</verify_peername>
+					<allow_selfsigned_certificate>0</allow_selfsigned_certificate>
+				</connection>
 			</monetra_client_ticket>
+
 		</payment>
 	</default>
 </config>

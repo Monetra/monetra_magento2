@@ -1,56 +1,158 @@
 <?xml version="1.0"?>
-<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
-	<system>
-		<section id="payment">
-			<group id="monetra_client_ticket" translate="label" type="text" sortOrder="500" showInDefault="1" showInWebsite="1" showInStore="1">
-				<label>Monetra Client Ticket Request</label>
-				<field id="active" translate="label" type="select" sortOrder="7" showInDefault="1" showInWebsite="1" showInStore="0">
-					<label>Enabled</label>
-					<source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-				</field>
-				<field id="payment_action" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
-					<label>Payment Action</label>
-					<source_model>Monetra\Monetra\Model\Source\PaymentAction</source_model>
-				</field>
-				<field id="title" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
-					<label>Title</label>
-				</field>
-				<field id="order_status" translate="label" type="select" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="0">
-					<label>New Order Status</label>
-					<source_model>Magento\Sales\Model\Config\Source\Order\Status\Processing</source_model>
-				</field>
-				<field id="monetra_host" translate="label" type="text" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="0">
-					<label>Monetra Host</label>
-				</field>
-				<field id="monetra_port" translate="label" type="text" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="0">
-					<label>Monetra Port</label>
-				</field>
-				<field id="monetra_username" translate="label" type="text" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="0">
-					<label>Monetra Username</label>
-				</field>
-				<field id="monetra_password" translate="label" type="password" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="0">
-					<label>Monetra Password</label>
-					<backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
-				</field>
-				<field id="cctypes" translate="label" type="multiselect" sortOrder="150" showInDefault="1" showInWebsite="1" showInStore="0">
-					<label>Credit Card Types</label>
-					<source_model>Monetra\Monetra\Model\Source\CcType</source_model>
-				</field>
-				<field id="useccv" translate="label" type="select" sortOrder="160" showInDefault="1" showInWebsite="1" showInStore="0">
-					<label>Credit Card Verification</label>
-					<source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-				</field>
-				<field id="user_facing_deny_message" translate="label" type="textarea" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="0">
-					<label>User-Facing Payment Denial Message</label>
-				</field>
-				<field id="user_facing_error_message" translate="label" type="textarea" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="0">
-					<label>User-Facing Payment Error Message</label>
-				</field>
-				<field id="sort_order" translate="label" type="text" sortOrder="210" showInDefault="1" showInWebsite="1" showInStore="0">
-					<label>Sort Order</label>
-					<frontend_class>validate-number</frontend_class>
-				</field>
-			</group>
-		</section>
-	</system>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="payment">
+
+            <group id="monetra_client_ticket" translate="label" type="text" sortOrder="30" showInDefault="1"
+                   showInWebsite="1" showInStore="1">
+                <label>Monetra Client Ticket Request</label>
+                <field id="title" translate="label" type="text" sortOrder="31" showInDefault="1" showInWebsite="1"
+                       showInStore="1">
+                    <label>Title</label>
+                </field>
+                <comment>
+                    <![CDATA[Accept credit n your Magento store using a Monetra payment processor. Your customers never leave your store to complete the purchase.]]></comment>
+                <attribute type="expanded">1</attribute>
+                <frontend_model>Magento\Config\Block\System\Config\Form\Fieldset</frontend_model>
+                <field id="active" translate="label" type="select" sortOrder="32" showInDefault="1" showInWebsite="1"
+                       showInStore="0">
+                    <label>Enabled</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="test_mode" translate="label" type="select" sortOrder="33" showInDefault="1" showInWebsite="1"
+                       showInStore="0">
+                    <label>Use Test Server for processing orders</label>
+                    <comment> <![CDATA[
+                    Default testing credentials: <a href="https://www.mainstreetsoftworks.com/test-server">click here</a><br/>
+                    AVV and CVV testing:
+                    <a href=""https://www.monetra.com/faqs/developer/does-monetra-have-a-test-mode">click here</a>]]></comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <group id="liveserver" translate="label" sortOrder="40" type="text" showInDefault="1"
+                       showInWebsite="1" showInStore="1">
+                    <label>Logon Credentials(Live)</label>
+                    <comment>Credentials for logging on to your Monetra server</comment>
+                    <frontend_model>Magento\Config\Block\System\Config\Form\Fieldset</frontend_model>
+                    <field id="host" translate="label" type="text" sortOrder="41" showInDefault="1"
+                           showInWebsite="1" showInStore="0">
+                        <label>Monetra Host</label>
+                    </field>
+                    <field id="port" translate="label" type="text" sortOrder="42" showInDefault="1"
+                           showInWebsite="1" showInStore="0">
+                        <label>Monetra Port</label>
+                    </field>
+                    <field id="username" translate="label" type="text" sortOrder="43" showInDefault="1"
+                           showInWebsite="1" showInStore="0">
+                        <label>Monetra Username</label>
+                    </field>
+                    <field id="password" translate="label" type="password" sortOrder="44" showInDefault="1"
+                           showInWebsite="1" showInStore="0">
+                        <label>Monetra Password</label>
+                        <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+                    </field>
+                </group>
+                <group id="testserver" translate="label" type="text" sortOrder="50" showInDefault="1"
+                       showInWebsite="1" showInStore="1">
+                    <label>Logon Credentials(Test)</label>
+                    <comment>Credentials for logging on to a test Monetra server, defaults to Monetra's public test server</comment>
+                    <frontend_model>Magento\Config\Block\System\Config\Form\Fieldset</frontend_model>
+                    <field id="host" translate="label" type="text" sortOrder="51" showInDefault="1"
+                           showInWebsite="1" showInStore="0">
+                        <label>Monetra Test Host</label>
+                    </field>
+                    <field id="port" translate="label" type="text" sortOrder="52" showInDefault="1"
+                           showInWebsite="1" showInStore="0">
+                        <label>Monetra Test Port</label>
+                    </field>
+                    <field id="username" translate="label" type="text" sortOrder="53" showInDefault="1"
+                           showInWebsite="1" showInStore="0">
+                        <label>Monetra Test Username</label>
+                    </field>
+                    <field id="password" translate="label" type="password" sortOrder="54" showInDefault="1"
+                           showInWebsite="1" showInStore="0">
+                        <label>Monetra Test Password</label>
+                        <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+                    </field>
+                </group>
+                <group id="transactions" translate="label" type="text" sortOrder="60" showInDefault="1"
+                       showInWebsite="1" showInStore="1">
+                    <label>Payment Processing Configuration</label>
+                    <comment>Configuration of how payment processing will be handled</comment>
+                    <frontend_model>Magento\Config\Block\System\Config\Form\Fieldset</frontend_model>
+
+                    <field id="order_status" translate="label" type="select" sortOrder="61" showInDefault="1"
+                           showInWebsite="1" showInStore="0">
+                        <label>New Order Status</label>
+                        <source_model>Magento\Sales\Model\Config\Source\Order\Status\Processing</source_model>
+                    </field>
+                    <field id="payment_action" translate="label" type="select" sortOrder="62" showInDefault="1"
+                           showInWebsite="1" showInStore="0">
+                        <label>Payment Action</label>
+                        <source_model>Monetra\Monetra\Model\Source\PaymentAction</source_model>
+                    </field>
+                    <field id="useccv" translate="label" type="select" sortOrder="63" showInDefault="1"
+                           showInWebsite="1" showInStore="0">
+                        <label>Credit Card Verification (CCV) *recommended*</label>
+                        <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    </field>
+                    <field id="useavv" translate="label" type="select" sortOrder="63" showInDefault="1"
+                           showInWebsite="1" showInStore="0">
+                        <label>Address Verification (AVV)</label>
+                        <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    </field>
+                    <field id="cctypes" translate="label" type="multiselect" sortOrder="65" showInDefault="1"
+                           showInWebsite="1" showInStore="0">
+                        <label>Credit Card Types</label>
+                        <source_model>Monetra\Monetra\Model\Source\CcType</source_model>
+                    </field>
+                    <field id="user_facing_deny_message" translate="label" type="textarea" sortOrder="66"
+                           showInDefault="1" showInWebsite="1" showInStore="0">
+                        <label>User-Facing Payment Denial Message</label>
+                    </field>
+                    <field id="user_facing_error_message" translate="label" type="textarea" sortOrder="67"
+                           showInDefault="1" showInWebsite="1" showInStore="0">
+                        <label>User-Facing Payment Error Message</label>
+                    </field>
+
+
+                    <field id="sort_order" translate="label" type="text" sortOrder="69" showInDefault="1"
+                           showInWebsite="1" showInStore="0">
+                        <label>Sort Order</label>
+                        <frontend_class>validate-number</frontend_class>
+                        <comment>For multiple payment options, the position for this payment option in the list.</comment>
+                    </field>
+                </group>
+            <group id="connection" translate="label" type="text" sortOrder="90" showInDefault="1"
+                   showInWebsite="0" showInStore="0">
+                <label>Advannced Connection Configuration</label>
+                <comment>Only on rare occassion do these settings neeed to be changed</comment>
+                <field id="encryption" translate="label" type="text" sortOrder="91" showInDefault="1"
+                       showInWebsite="1" showInStore="0">
+                    <label>Connection type</label>
+                    <comment>Overall encryption options used.  TLS is preferred.</comment>
+                </field>
+                <field id="ciphers" translate="label" type="text" sortOrder="92" showInDefault="1"
+                       showInWebsite="1" showInStore="0">
+                    <label>Encryption Ciphers</label>
+                    <comment>On rare occassions you may be forced to specify specific ciphers to force conformity with higher levels of encryption. For example, you must specify only TLS1.2 approved ciphers if you require TLS1.2</comment>
+                </field>
+                <field id="allow_selfsigned_certificate" translate="label" type="select" sortOrder="93" showInDefault="1"
+                       showInWebsite="1" showInStore="0">
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+
+                    <label>Accept Self Signed Certificates</label>
+                    <comment>If your using an internal payment server and have a self signed certitifcate you will need to enable it here.  *No is the recommended setting.</comment>
+                </field>
+                <field id="verify_peername" translate="label" type="select" sortOrder="94" showInDefault="1"
+                       showInWebsite="1" showInStore="0">
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+
+                    <label>Verify Certificate Name</label>
+                    <comment>Enable only if the name on your payment server SSL certificate does not match host name. *Yes is the recommended setting.</comment>
+                </field>
+            </group>
+            </group>
+        </section>
+    </system>
 </config>
