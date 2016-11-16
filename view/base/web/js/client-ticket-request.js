@@ -55,17 +55,17 @@ define(
 			}, 1000);
 		};
 
-		startReloadInterval();
-
-		var alert_options = {
-			title: 'Payment Error',
-			content: 'An error occurred while attempting to verify payment information.'
-		};
-
 		var relevant_response_tag_names = [
 			'ticket',
 			'monetra_resp_hmacsha256'
 		];
+		
+		var error_alert_params = {
+			title: 'Payment Error',
+			content: 'An error occurred while attempting to verify payment information. '
+		};
+		
+		startReloadInterval();
 
 		return {
 
@@ -113,7 +113,38 @@ define(
 						submit_order();
 					},
 					error: function(jqXHR) {
-						alert(alert_options);
+
+						var error_message;
+						
+						/* A status code of 400 means that the Monetra server 
+						 * rejected the request. Depending on why this happened,
+						 * it's possible that a page reload could resolve the 
+						 * problem. The "Ok" button that dismisses the alert will 
+						 * reload the page. Also, advise the user that if the 
+						 * reload does not solve the problem, they should contact
+						 * support.
+						 */
+						if (jqXHR.status === 400) {
+							error_message = 'Please click "OK" to reload the page and try again. ';
+							error_message += 'If issue is not resolved, please contact support for assistance.';
+							error_alert_params.buttons = [{
+								text: $.mage.__('OK'),
+								click: function() {
+									this.closeModal(true);
+									window.location.reload();
+								}
+							}];
+						} else {
+							/* In all other cases (browser rejects Monetra server cert,
+							 * erroneous Monetra server URL, etc.), advise the user
+							 * to contact support. 
+							 */
+							error_message = 'Please contact support for assistance.';
+						}
+						
+						error_alert_params.content += $.mage.__(error_message);
+						
+						alert(error_alert_params);
 					}
 				});
 			},
