@@ -125,7 +125,8 @@ define(
 						 * support.
 						 */
 						if (jqXHR.status === 400) {
-							error_message = 'Please click "OK" to reload the page and try again. ';
+							error_message = 'It is possible that the checkout process took too long to complete. '
+							error_message += 'Please click "OK" to reload the page and try again. ';
 							error_message += 'If issue is not resolved, please contact support for assistance.';
 							error_alert_params.buttons = [{
 								text: $.mage.__('OK'),
