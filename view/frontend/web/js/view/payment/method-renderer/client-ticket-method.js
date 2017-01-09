@@ -54,9 +54,8 @@ define(
 					return;
 				}
 
-				var monetra_values = window.checkoutConfig.payment[this.getCode()];
-				var post_url = monetra_values.url;
-				var values_to_post = monetra_values;
+				var values_to_post = Object.assign({}, window.checkoutConfig.payment[this.getCode()]);
+				var post_url = values_to_post.url;
 
 				var submit_order = this.placeOrder.bind(this);
 				var append_ticket_field = this.appendTicketField.bind(this);
