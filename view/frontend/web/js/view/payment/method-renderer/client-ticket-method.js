@@ -4,8 +4,9 @@ define(
 		'Magento_Payment/js/view/payment/cc-form',
 		'Magento_Checkout/js/model/quote',
 		'Monetra_Monetra/js/client-ticket-request',
+		'Magento_Ui/js/modal/alert'
 	],
-	function ($, Component, quote, clientTicketRequest) {
+	function ($, Component, quote, clientTicketRequest, alert) {
 		'use strict';
 
 		return Component.extend({
@@ -65,10 +66,31 @@ define(
 				var exp_date = clientTicketRequest.formatExpDate(cc_exp_month_input, cc_exp_year_input);
 				var cvv_input = $('#' + clientTicketRequest.method_code + '_cc_cid');
 
+				var billing_address = quote.billingAddress();
+				if (typeof billing_address === 'undefined') {
+					alert({
+						content: 'Please enter a billing address.'
+					});
+					return;
+				}
+				if (typeof billing_address.street === 'undefined' || typeof billing_address.street[0] === 'undefined' || billing_address.street[0] == '') {
+					alert({
+						content: 'Please enter a billing street address.'
+					});
+					return;
+				}
+				if (typeof billing_address.postcode === 'undefined' || billing_address.postcode == '') {
+					alert({
+						content: 'Please enter a billing zip code.'
+					});
+					return;
+				}
+
 				delete values_to_post.url;
 				values_to_post.account = $('#' + clientTicketRequest.method_code + '_cc_number').val();
 				values_to_post.expdate = exp_date;
-				values_to_post.zip = quote.billingAddress().postcode;
+				values_to_post.street = billing_address.street[0];
+				values_to_post.zip = billing_address.postcode;
 				if (cvv_input.length > 0) {
 					values_to_post.cvv2 = $('#' + clientTicketRequest.method_code + '_cc_cid').val();
 				}
