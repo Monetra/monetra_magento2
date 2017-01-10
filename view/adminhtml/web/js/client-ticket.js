@@ -9,14 +9,13 @@ define(
 	function($, clientTicketRequest, alert) {
 
 		var submit_order = order.submit;
-		var response_field_container = $('#monetra_client_ticket_response_fields');
 
 		var append_ticket_field = function(key, value) {
 			$('<input>')
 				.attr('type', 'hidden')
 				.attr('name', 'payment[' + key + ']')
 				.attr('value', value)
-				.appendTo(response_field_container);
+				.appendTo($('#monetra_client_ticket_response_fields'));
 		};
 
 		order.submit = function() {
@@ -46,6 +45,7 @@ define(
 			request_field_container.children('input').each(function() {
 				values_to_post[$(this).attr('name').replace('ticket_', '')] = $(this).val();
 			});
+
 			values_to_post.account = $('#' + clientTicketRequest.method_code + '_cc_number').val();
 			values_to_post.expdate = exp_date;
 
