@@ -21,7 +21,7 @@
 		"magento/module-sales": "100.0.*",
 		"magento/module-checkout": "100.0.*",
 		"magento/module-payment": "100.0.*",
-		"monetra/libmonetra_php": "0.9.6"
+		"monetra/libmonetra_php": "0.9.7"
 	},
 	"autoload": {
 		"files": [
