@@ -143,9 +143,10 @@ define(
 							error_message = 'Please contact support for assistance.';
 						}
 						
-						error_alert_params.content += $.mage.__(error_message);
-						
-						alert(error_alert_params);
+						alert({
+							title: error_alert_params.title,
+							content: error_alert_params.content + $.mage.__(error_message)
+						});
 					}
 				});
 			},
