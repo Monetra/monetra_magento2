@@ -2,7 +2,7 @@
 	"name": "monetra/monetra_magento2",
 	"type": "magento2-module",
 	"description": "A Magento 2 module for processing payments through a Monetra server",
-	"version": "1.0.8",
+	"version": "1.0.9",
 	"license": "MIT",
 	"keywords": [
 		"monetra",
@@ -16,12 +16,12 @@
 		"email": "support@monetra.com"
 	},
 	"require": {
-		"php": "~5.5.22|~5.6.0|~7.0.0",
-		"magento/framework": "100.0.*",
-		"magento/module-sales": "100.0.*",
-		"magento/module-checkout": "100.0.*",
-		"magento/module-payment": "100.0.*",
-		"monetra/libmonetra_php": "0.9.7"
+		"php": "~5.5|~7.0",
+		"magento/framework": "~100.0",
+		"magento/module-sales": "~100.0",
+		"magento/module-checkout": "~100.0",
+		"magento/module-payment": "~100.0",
+		"monetra/libmonetra_php": "~0.9"
 	},
 	"autoload": {
 		"files": [
