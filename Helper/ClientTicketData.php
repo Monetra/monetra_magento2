@@ -21,11 +21,12 @@ class ClientTicketData extends \Magento\Framework\App\Helper\AbstractHelper
 		$admin = 'cardshieldticket';
 		$req_sequence = mt_rand();
 		$req_timestamp = time();
-		$data_to_hash = $username . $action . $admin . $req_sequence . $req_timestamp;
+		$req_fields = $this->getConfigValue('required_payment_fields');
+		$data_to_hash = $username . $action . $admin . $req_sequence . $req_timestamp . $req_fields;
 		$password = $this->_encryptor->decrypt($this->getConfigValue('monetra_password'));
 
 		$hmac = hash_hmac('sha256', $data_to_hash, $password);
-		return [
+		$data = [
 			'url' => 'https://' . $this->getConfigValue('monetra_host') . ':' . $this->getConfigValue('monetra_port'),
 			'username' => $username,
 			'action' => $action,
@@ -34,6 +35,10 @@ class ClientTicketData extends \Magento\Framework\App\Helper\AbstractHelper
 			'monetra_req_sequence' => $req_sequence,
 			'monetra_req_hmacsha256' => $hmac
 		];
+		if (!empty($req_fields)) {
+			$data['monetra_req_fields'] = $req_fields;
+		}
+		return $data;
 	}
 
 	private function getConfigValue($key)

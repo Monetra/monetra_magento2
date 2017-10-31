@@ -117,24 +117,29 @@ define(
 						var error_message;
 						
 						/* A status code of 400 means that the Monetra server 
-						 * rejected the request. Depending on why this happened,
-						 * it's possible that a page reload could resolve the 
-						 * problem. The "Ok" button that dismisses the alert will 
-						 * reload the page. Also, advise the user that if the 
-						 * reload does not solve the problem, they should contact
-						 * support.
+						 * rejected the request.
 						 */
 						if (jqXHR.status === 400) {
-							error_message = 'It is possible that the checkout process took too long to complete. ';
-							error_message += 'Please click "OK" to reload the page and try again. ';
-							error_message += 'If issue is not resolved, please contact support for assistance.';
-							error_alert_params.buttons = [{
-								text: $.mage.__('OK'),
-								click: function() {
-									this.closeModal(true);
-									window.location.reload();
-								}
-							}];
+							/* If the response text contains "Missing required field", alert 
+							 * the user that they may have missed filling out a form field.
+							 */
+							if (jqXHR.responseText.toLowerCase().indexOf("missing required field") !== -1) {
+								error_message = 'Please double-check that all required fields have been filled out.';
+							} else {
+								/* Otherwise, it's possible that the hmac time window has expired, 
+								 * in which case a page reload would solve the issue. 
+								 */
+								error_message = 'It is possible that the checkout process took too long to complete. ';
+								error_message += 'Please click "OK" to reload the page and try again. ';
+								error_message += 'If issue is not resolved, please contact support for assistance.';
+								error_alert_params.buttons = [{
+									text: $.mage.__('OK'),
+									click: function() {
+										this.closeModal(true);
+										window.location.reload();
+									}
+								}];
+							}
 						} else {
 							/* In all other cases (browser rejects Monetra server cert,
 							 * erroneous Monetra server URL, etc.), advise the user

@@ -12,6 +12,7 @@
 				<user_facing_deny_message>There was a problem with the provided credit card. Please try a different one or contact support for more information.</user_facing_deny_message>
 				<user_facing_error_message>We experienced a problem while attempting to process your payment. Please contact support for more information.</user_facing_error_message>
 				<usecvv>1</usecvv>
+				<required_payment_fields>account,expdate,cardholdername,cv,street,zip</required_payment_fields>
 			</monetra_client_ticket>
 		</payment>
 	</default>

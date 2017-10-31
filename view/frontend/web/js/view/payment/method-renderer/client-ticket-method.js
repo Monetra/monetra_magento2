@@ -66,6 +66,18 @@ define(
 				var cvv_input = $('#' + clientTicketRequest.method_code + '_cc_cid');
 
 				var billing_address = quote.billingAddress();
+				
+				values_to_post.cardholdername = "";
+				if (billing_address.firstname) {
+					values_to_post.cardholdername += billing_address.firstname + " ";
+				}
+				if (billing_address.middlename) {
+					values_to_post.cardholdername += billing_address.middlename + " ";
+				}
+				if (billing_address.lastname) {
+					values_to_post.cardholdername += billing_address.lastname;
+				}
+				
 				if (typeof billing_address === 'undefined') {
 					alert({
 						content: 'Please enter a billing address.'
@@ -91,7 +103,7 @@ define(
 				values_to_post.street = billing_address.street[0];
 				values_to_post.zip = billing_address.postcode;
 				if (cvv_input.length > 0) {
-					values_to_post.cvv2 = $('#' + clientTicketRequest.method_code + '_cc_cid').val();
+					values_to_post.cv = $('#' + clientTicketRequest.method_code + '_cc_cid').val();
 				}
 
 				clientTicketRequest.sendRequest(

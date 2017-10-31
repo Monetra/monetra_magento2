@@ -45,6 +45,11 @@ class Form extends \Magento\Payment\Block\Form\Cc
 	{
 		return $this->ticketRequestData->monetra_req_timestamp;
 	}
+	
+	public function getMonetraFields()
+	{
+		return $this->ticketRequestData->monetra_req_fields;
+	}
 
 	public function getMonetraHmac()
 	{

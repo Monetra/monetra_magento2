@@ -28,6 +28,20 @@ define(
 			var cvv_input = $('#' + clientTicketRequest.method_code + '_cc_cid');
 			var zipcode = $('#order-billing_address_postcode').val();
 			var street = $('#order-billing_address_street0').val();
+			var firstname = $('#order-billing_address_firstname').val();
+			var middlename = $('#order-billing_address_middlename').val();
+			var lastname = $('#order-billing_address_lastname').val();
+			
+			values_to_post.cardholdername = "";
+			if (firstname) {
+				values_to_post.cardholdername += firstname + " ";
+			}
+			if (middlename) {
+				values_to_post.cardholdername += middlename + " ";
+			}
+			if (lastname) {
+				values_to_post.cardholdername += lastname;
+			}
 
 			if (typeof zipcode === 'undefined' || zipcode == '') {
 				alert({
@@ -53,7 +67,7 @@ define(
 			values_to_post.street = street;
 
 			if (cvv_input.length > 0) {
-				values_to_post.cvv2 = $('#' + clientTicketRequest.method_code + '_cc_cid').val();
+				values_to_post.cv = $('#' + clientTicketRequest.method_code + '_cc_cid').val();
 			}
 
 			clientTicketRequest.sendRequest(
