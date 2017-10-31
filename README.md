@@ -53,4 +53,6 @@ in the list of payment methods. Click on the arrow icon to expand the configurat
 
 - **Credit Card Verification**: If "Yes", payment form will include a field for card verification value (CVV), which will be sent to the Monetra server along with the other payment fields to generate the ticket (CVV will not be sent to your Magento server).
 
+- **Required Payment Fields**: The fields that will be required by Monetra in order to successfully generate a ticket. If any of the selected fields are missing when the payment form is submitted, the ticket request will fail.
+
 - **Sort Order**: Determines where this payment method will appear in relation to other payment methods on the checkout page. For example, if the sort order for this method is set to 1, and the sort order for another payment method is set to 2, this one will appear above the other one on the list of payment method options.
