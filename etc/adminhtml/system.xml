@@ -40,9 +40,10 @@
 					<label>Credit Card Verification</label>
 					<source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
 				</field>
-				<field id="required_payment_fields" can_be_empty="1" translate="label" type="multiselect" sortOrder="170" showInDefault="1" showInWebsite="1" showInStore="0">
+				<field id="required_payment_fields" translate="label" type="multiselect" sortOrder="170" showInDefault="1" showInWebsite="1" showInStore="0">
 					<label>Required Payment Fields</label>
 					<source_model>Monetra\Monetra\Model\Source\RequiredPaymentFields</source_model>
+					<can_be_empty>1</can_be_empty>
 				</field>
 				<field id="user_facing_deny_message" translate="label" type="textarea" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="0">
 					<label>User-Facing Payment Denial Message</label>
