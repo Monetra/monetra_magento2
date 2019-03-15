@@ -28,6 +28,8 @@ class MonetraInterface
 			throw new MonetraException(__('Could not set method to SSL.'));
 		}
 
+		M_VerifySSLCert($this->conn, true);
+
 		$this->username = $config_data['username'];
 		$this->password = $config_data['password'];
 	}
