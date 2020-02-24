@@ -16,14 +16,19 @@ class Form extends \Magento\Payment\Block\Form\Cc
 		$this->ticketRequestData = (object) $clientTicketData->generateTicketRequestData();
 	}
 
+	public function getHostDomain()
+	{
+		return $this->ticketRequestData->hmac_fields['domain'];
+	}
+
 	public function getMonetraUrl()
 	{
-		return $this->ticketRequestData->url;
+		return $this->ticketRequestData->payment_form_host;
 	}
 
 	public function getMonetraUsername()
 	{
-		return $this->ticketRequestData->username;
+		return $this->ticketRequestData->hmac_fields['username'];
 	}
 
 	public function getMonetraAction()
@@ -38,12 +43,12 @@ class Form extends \Magento\Payment\Block\Form\Cc
 
 	public function getMonetraSequence()
 	{
-		return $this->ticketRequestData->monetra_req_sequence;
+		return $this->ticketRequestData->hmac_fields['sequence'];
 	}
 
 	public function getMonetraTimestamp()
 	{
-		return $this->ticketRequestData->monetra_req_timestamp;
+		return $this->ticketRequestData->hmac_fields['timestamp'];
 	}
 	
 	public function getMonetraFields()
@@ -53,6 +58,6 @@ class Form extends \Magento\Payment\Block\Form\Cc
 
 	public function getMonetraHmac()
 	{
-		return $this->ticketRequestData->monetra_req_hmacsha256;
+		return $this->ticketRequestData->hmac_fields['hmacsha256'];
 	}
 }

@@ -5,200 +5,164 @@ use \Monetra\Monetra\Helper\MonetraException;
 
 class MonetraInterface
 {
+	private $origin;
 	private $username;
 	private $password;
 
 	public function __construct($config_data)
 	{
-		if (!isset($config_data['host']) || !isset($config_data['port'])
-		|| !isset($config_data['username']) || !isset($config_data['password'])) {
-			throw new MonetraException(__('Monetra hostname, port, username and password must be provided.'));
-		}
-		if (!M_InitEngine()) {
-			throw new MonetraException(__('Could not initialize engine.'));
-		}
-
-		$this->conn = M_InitConn();
-
-		if (!M_SetBlocking($this->conn, 1)) {
-			throw new MonetraException(__('Could not set blocking mode.'));
-		}
-
-		if (!M_SetSSL($this->conn, $config_data['host'], $config_data['port'])) {
-			throw new MonetraException(__('Could not set method to SSL.'));
-		}
-
-		M_VerifySSLCert($this->conn, true);
-
+		$this->origin = 'https://' . $config_data['host'] . ':' . $config_data['port'];
 		$this->username = $config_data['username'];
 		$this->password = $config_data['password'];
 	}
 
-	public function authorize($ticket, $amount)
+	public function authorize($ticket, $amount, $order)
 	{
-		return $this->request([
-			'action' => 'sale',
-			'capture' => 'no',
-			'cardshieldticket' => $ticket,
-			'amount' => $amount
-		]);
+		$cardholdername = $order->getCustomerName();
+		$address = $order->getBillingAddress();
+		$street = $address->getStreet1();
+		$zip = $address->getPostcode();
+
+		$data = [
+			'account_data' => [
+				'cardshieldticket' => $ticket,
+				'cardholdername' => $cardholdername
+			],
+			'verification' => [
+				'street' => strval($street),
+				'zip' => strval($zip)
+			],
+			'money' => [
+				'amount' => strval($amount)
+			]
+		];
+		
+		return $this->request('POST', 'transaction/preauth', $data);
 	}
 
-	public function capture($ttid, $order_num)
+	public function capture($ttid, $order)
 	{
-		return $this->request([
-			'action' => 'capture',
-			'ttid' => $ttid,
-			'ordernum' => $order_num
-		]);
+		$order_num = $order->getIncrementId();
+		$data = [
+			'order' => ['ordernum' => $order_num]
+		];
+		return $this->request('PATCH', 'transaction/' . $ttid . '/complete', $data);
 	}
 
-	public function sale($ticket, $amount, $order_num)
+	public function sale($ticket, $amount, $order)
 	{
-		return $this->request([
-			'action' => 'sale',
-			'cardshieldticket' => $ticket,
-			'amount' => $amount,
-			'ordernum' => $order_num
-		]);
+		$order_num = $order->getIncrementId();
+		$cardholdername = $order->getCustomerName();
+		$address = $order->getBillingAddress();
+		$street = $address->getStreet1();
+		$zip = $address->getPostcode();
+
+		$data = [
+			'account_data' => [
+				'cardshieldticket' => $ticket,
+				'cardholdername' => $cardholdername
+			],
+			'verification' => [
+				'street' => strval($street),
+				'zip' => strval($zip)
+			],
+			'money' => [
+				'amount' => strval($amount)
+			],
+			'order' => [
+				'ordernum' => strval($order_num)
+			]
+		];
+
+		return $this->request('POST', 'transaction/purchase', $data);
 	}
 
 	public function void($ttid)
 	{
-		return $this->request([
-			'action' => 'void',
-			'ttid' => $ttid
-		]);
+		return $this->request('DELETE', 'transaction/' . $ttid . '/void');
 	}
 
 	public function refund($ttid, $amount)
 	{
+		$refund_data = [
+			'money' => [
+				'amount' => $amount
+			]
+		];
+
 		/* A "refund" will trigger either a return, reversal, or void,
 		 * depending on the circumstances. First check to see if the
 		 * transaction in question is still unsettled.
 		 */
-		$unsettled = $this->request([
-			'ttid' => $ttid,
-			'action' => 'admin',
-			'admin' => 'gut'
-		]);
+		$unsettled = $this->request('GET', 'report/unsettled', ['ttid' => $ttid]);
+
 		if (count($unsettled) > 0) {
+
 			/* If transaction is unsettled, only use return if amount specified for return
 			 * is less than original transaction amount.
 			 */
 			if ($amount < $unsettled[0]['amount']) {
-				return $this->request([
-					'action' => 'return',
-					'ttid' => $ttid,
-					'amount' => $amount
-				]);
+
+				return $this->request('POST', 'transaction/' . $ttid . '/refund', $refund_data);
+
 			} else {
+
 				/* If return amount matches original amount, attempt reversal first.
 				 * If that doesn't work, use void.
 				 */
-				$reversal = $this->request([
-					'action' => 'reversal',
-					'ttid' => $ttid,
-					'amount' => $amount
-				]);
+				$reversal = $this->request('DELETE', 'transaction/' . $refund_data);
+
 				if ($reversal['code'] === 'AUTH') {
 					return $reversal;
 				} else {
-					unset($params['amount']);
 					return $this->void($ttid);
 				}
 			}
 		} else {
+
 			/* If transaction is settled, use return. */
-			return $this->request(array_merge($params, [
-				'action' => 'return'
-			]));
+			return $this->request('POST', 'transaction/' . $ttid . '/refund', $refund_data);
+
 		}
 	}
 
-	private function request($params)
+	private function request($method, $path, $data = [])
 	{
-		$params['username'] = $this->username;
-		$params['password'] = $this->password;
 
-		if (empty($this->conn['fd'])) {
-			if (!M_Connect($this->conn)) {
-				throw new MonetraException(__(M_ConnectionError($this->conn)));
-			}
-		}
-		$identifier = M_TransNew($this->conn);
-		foreach ($params as $key => $value) {
-			M_TransKeyVal($this->conn, $identifier, $key, $value);
-		}
-		return $this->executeRequest($identifier);
-	}
+		$url = $this->origin . '/api/v1/' . $path;
 
-	private function executeRequest($identifier)
-	{
-		if (!M_TransSend($this->conn, $identifier)) {
-			throw new MonetraException(__('Transaction improperly structured.'));
-		}
-		if (M_ReturnStatus($this->conn, $identifier) === M_SUCCESS) {
-			if (M_IsCommaDelimited($this->conn, $identifier)) {
-				$csv_string = M_GetCommaDelimited($this->conn, $identifier);
-				if ($csv_string === false) {
-					throw new MonetraException(__('Transaction does not exist or is incomplete.'));
-				}
-				$response = $this->parseCSVResponse($csv_string);
+		$username = str_replace(':', '|', $this->username);
+
+		$headers = [
+			"Authorization: Basic " . base64_encode($username . ':' . $this->password)
+		];
+
+		if (!empty($data)) {
+			if ($method === 'GET') {
+				$url .= '?' . http_build_query($data);
 			} else {
-				$response = $this->parseKeyValueResponse($identifier);
+				$request_body = json_encode($data);
+				$headers[] = "Content-Type: application/json";
+				$headers[] = "Content-Length: " . strlen($request_body);
 			}
-		} else {
-			$response = $this->parseKeyValueResponse($identifier);
 		}
-		M_DeleteTrans($this->conn, $identifier);
-		return $response;
+
+		$curl = curl_init();
+
+		curl_setopt($curl, \CURLOPT_URL, $url);
+		curl_setopt($curl, \CURLOPT_CUSTOMREQUEST, $method);
+		curl_setopt($curl, \CURLOPT_HTTPAUTH, \CURLAUTH_BASIC);
+		curl_setopt($curl, \CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($curl, \CURLOPT_HTTPHEADER, $headers);
+		if ($method !== 'GET' && !empty($request_body)) {
+			curl_setopt($curl, \CURLOPT_POSTFIELDS, $request_body);
+		}
+
+		$response = curl_exec($curl);
+
+		curl_close($curl);
+
+		return json_decode($response, true);
 	}
 
-	private function parseKeyValueResponse($identifier)
-	{
-		$keys_and_values = array();
-		$keys = M_ResponseKeys($this->conn, $identifier);
-		if ($keys === false) {
-			throw new MonetraException(__('Specified transaction does not exist or is not yet completed.'));
-		}
-		for ($i = 0; $i < count($keys); $i++) {
-			$key = $keys[$i];
-			try {
-				$param = M_ResponseParam($this->conn, $identifier, $key);
-				if ($param === false) {
-					throw new MonetraException(__(sprintf('Could not retrieve param "%s" for transaction "%s".', $key, $identifier)));
-				}
-				$keys_and_values[$key] = $param;
-			} catch (\Exception $e) {
-				continue;
-			}
-		}
-		return $keys_and_values;
-	}
-
-	private function parseCSVResponse($csv_string)
-	{
-		$temp_file = tmpfile();
-		fwrite($temp_file, mb_convert_encoding($csv_string, 'UTF-8', 'UTF-8'));
-		rewind($temp_file);
-		$data = array();
-		$count = 0;
-		while (($row = fgetcsv($temp_file, 0, ',', '"', '"')) !== false) {
-			if (!isset($headers)) {
-				$headers = $row;
-				continue;
-			}
-			$associative_row = [];
-			foreach ($headers as $index => $header) {
-				if (isset($row[$index])) {
-					$associative_row[$header] = $row[$index];
-				}
-			}
-			$data[] = $associative_row;
-			$count++;
-		}
-		fclose($temp_file);
-		return $data;
-	}
 }

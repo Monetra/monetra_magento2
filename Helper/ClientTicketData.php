@@ -17,23 +17,40 @@ class ClientTicketData extends \Magento\Framework\App\Helper\AbstractHelper
 	public function generateTicketRequestData()
 	{
 		$username = $this->getConfigValue('monetra_username');
-		$action = 'admin';
-		$admin = 'cardshieldticket';
-		$req_sequence = mt_rand();
-		$req_timestamp = time();
-		$req_fields = $this->getConfigValue('required_payment_fields');
-		$data_to_hash = $username . $action . $admin . $req_sequence . $req_timestamp . $req_fields;
 		$password = $this->_encryptor->decrypt($this->getConfigValue('monetra_password'));
 
-		$hmac = hash_hmac('sha256', $data_to_hash, $password);
-		$data = [
-			'url' => 'https://' . $this->getConfigValue('monetra_host') . ':' . $this->getConfigValue('monetra_port'),
+		$req_sequence = mt_rand();
+		$req_timestamp = time();
+
+		$hmac_fields = [
+			'timestamp' => $req_timestamp,
+			'domain' => 'https://' . $_SERVER['HTTP_HOST'],
+			'sequence' => $req_sequence,
 			'username' => $username,
-			'action' => $action,
-			'admin' => $admin,
-			'monetra_req_timestamp' => $req_timestamp,
-			'monetra_req_sequence' => $req_sequence,
-			'monetra_req_hmacsha256' => $hmac
+		];
+		$css_url = $this->getConfigValue('css_url');
+		if (!empty($css_url)) {
+			$hmac_fields['css_url'] = $css_url;
+		}
+		$hmac_fields = array_merge($hmac_fields, [
+			'include-cardholdername' => 'no',
+			'include-street' => 'no',
+			'include-zip' => 'no',
+			'expdate-format' => $this->getConfigValue('expdate_format'),
+			'auto-reload' => $this->getConfigValue('auto_reload'),
+			'autocomplete' => $this->getConfigValue('autocomplete'),
+			'include-submit-button' => 'no'
+		]);
+
+		$data_to_hash = implode("", $hmac_fields);
+
+		$hmac = hash_hmac('sha256', $data_to_hash, $password);
+
+		$hmac_fields = array_merge(['hmacsha256' => $hmac], $hmac_fields);
+
+		$data = [
+			'payment_form_host' => 'https://' . $this->getConfigValue('monetra_host') . ':' . $this->getConfigValue('monetra_port'),
+			'hmac_fields' => $hmac_fields
 		];
 		if (!empty($req_fields)) {
 			$data['monetra_req_fields'] = $req_fields;

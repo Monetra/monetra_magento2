@@ -1,12 +1,11 @@
 define(
 	[
-		'jquery',
 		'Magento_Payment/js/view/payment/cc-form',
+		'Magento_Ui/js/modal/alert',
 		'Magento_Checkout/js/model/quote',
-		'Monetra_Monetra/js/client-ticket-request',
-		'Magento_Ui/js/modal/alert'
+		'https://test.transafe.com:8665/PaymentFrame/PaymentFrame.js'
 	],
-	function ($, Component, quote, clientTicketRequest, alert) {
+	function (Component, alert, quote) {
 		'use strict';
 
 		return Component.extend({
@@ -14,7 +13,7 @@ define(
 				template: 'Monetra_Monetra/payment/client-ticket-form'
 			},
 			getCode: function() {
-				return clientTicketRequest.method_code;
+				return 'monetra_client_ticket';
 			},
 			context: function() {
 				return this;
@@ -22,6 +21,8 @@ define(
 
 			placeOrderHandler: null,
 			validateHandler: null,
+			iframeElement: null,
+			paymentFormHost: null,
 
 			setPlaceOrderHandler: function(handler) {
 				this.placeOrderHandler = handler;
@@ -48,71 +49,68 @@ define(
 				this.ticketFields[key] = value;
 			},
 
-			getClientTicket: function() {
+			populateIframeAttributes: function(target) {
+
+				var iframe_data = window.checkoutConfig.payment[this.getCode()];
+				var hmac_fields = iframe_data.hmac_fields;
+				var paymentFrame;
+
+				this.iframeElement = target;
+				this.paymentFormHost = iframe_data.payment_form_host;
+
+				for (var key in hmac_fields) {
+					this.iframeElement.setAttribute('data-hmac-' + key, hmac_fields[key]);
+				}
+
+				paymentFrame = new PaymentFrame(
+					this.iframeElement.getAttribute('id'),
+					this.paymentFormHost
+				);
+
+				paymentFrame.setPaymentSubmittedCallback(this.handlePaymentTicketResponse.bind(this));
+
+				paymentFrame.request();
+
+				quote.paymentMethod.subscribe((function(method_data) {
+					if (method_data.method === 'monetra_client_ticket') {
+						this.iframeElement.contentWindow.postMessage(
+							JSON.stringify({ type: "getHeight" }),
+							this.paymentFormHost
+						);
+					}
+				}).bind(this));
+
+			},
+
+			handlePaymentTicketResponse: function(response) {
 
 				if (!this.validateHandler()) {
 					return;
 				}
 
-				var values_to_post = Object.assign({}, window.checkoutConfig.payment[this.getCode()]);
-				var post_url = values_to_post.url;
-
-				var submit_order = this.placeOrder.bind(this);
-				var append_ticket_field = this.appendTicketField.bind(this);
-
-				var cc_exp_month_input = $('#' + clientTicketRequest.method_code + '_expiration');
-				var cc_exp_year_input = $('#' + clientTicketRequest.method_code + '_expiration_yr');
-				var exp_date = clientTicketRequest.formatExpDate(cc_exp_month_input, cc_exp_year_input);
-				var cvv_input = $('#' + clientTicketRequest.method_code + '_cc_cid');
-
-				var billing_address = quote.billingAddress();
-				
-				values_to_post.cardholdername = "";
-				if (billing_address.firstname) {
-					values_to_post.cardholdername += billing_address.firstname + " ";
-				}
-				if (billing_address.middlename) {
-					values_to_post.cardholdername += billing_address.middlename + " ";
-				}
-				if (billing_address.lastname) {
-					values_to_post.cardholdername += billing_address.lastname;
-				}
-				
-				if (typeof billing_address === 'undefined') {
+				if (response.code !== 'AUTH') {
 					alert({
-						content: 'Please enter a billing address.'
-					});
-					return;
-				}
-				if (typeof billing_address.street === 'undefined' || typeof billing_address.street[0] === 'undefined' || billing_address.street[0] == '') {
-					alert({
-						content: 'Please enter a billing street address.'
-					});
-					return;
-				}
-				if (typeof billing_address.postcode === 'undefined' || billing_address.postcode == '') {
-					alert({
-						content: 'Please enter a billing zip code.'
+						title: 'Payment Error',
+						content: response.verbiage
 					});
 					return;
 				}
 
-				delete values_to_post.url;
-				values_to_post.account = $('#' + clientTicketRequest.method_code + '_cc_number').val();
-				values_to_post.expdate = exp_date;
-				values_to_post.street = billing_address.street[0];
-				values_to_post.zip = billing_address.postcode;
-				if (cvv_input.length > 0) {
-					values_to_post.cv = $('#' + clientTicketRequest.method_code + '_cc_cid').val();
-				}
+				this.appendTicketField('ticket_response_ticket', response.ticket);
 
-				clientTicketRequest.sendRequest(
-					post_url,
-					values_to_post,
-					append_ticket_field,
-					submit_order
+				this.placeOrder();
+
+			},
+
+			getPaymentTicket: function() {
+
+				this.iframeElement.contentWindow.postMessage(
+					JSON.stringify({ type: "submitPaymentData" }),
+					this.paymentFormHost
 				);
+
 			}
+
 		});
 	}
 );

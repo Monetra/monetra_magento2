@@ -4,15 +4,15 @@
 		<payment>
 			<monetra_client_ticket>
 				<active>0</active>
-				<cctypes>AE,VI,MC,DI,JCB,OT</cctypes>
 				<model>Monetra\Monetra\Model\ClientTicket</model>
 				<order_status>processing</order_status>
 				<payment_action>authorize</payment_action>
-				<title>Credit Card (Monetra Client Ticket Request)</title>
+				<title>Credit Card (Monetra PaymentFrame)</title>
+				<expdate_format>single-text</expdate_format>
+				<auto_reload>1</auto_reload>
+				<autocomplete>0</autocomplete>
 				<user_facing_deny_message>There was a problem with the provided credit card. Please try a different one or contact support for more information.</user_facing_deny_message>
 				<user_facing_error_message>We experienced a problem while attempting to process your payment. Please contact support for more information.</user_facing_error_message>
-				<usecvv>1</usecvv>
-				<required_payment_fields>account,expdate,cardholdername,cv,street,zip</required_payment_fields>
 			</monetra_client_ticket>
 		</payment>
 	</default>

@@ -65,23 +65,16 @@ class ClientTicket extends \Magento\Payment\Model\Method\Cc
 		$additional_data = new DataObject($data->getAdditionalData());
 		$info_instance = $this->getInfoInstance();
 		$info_instance->setAdditionalInformation('ticket', $additional_data->getData('ticket_response_ticket'));
-		$info_instance->setAdditionalInformation('hmac', $additional_data->getData('ticket_response_monetra_resp_hmacsha256'));
-		$info_instance->setAdditionalInformation('sequence', $additional_data->getData('ticket_request_sequence'));
-		$info_instance->setAdditionalInformation('timestamp', $additional_data->getData('ticket_request_timestamp'));
 		return $this;
 	}
 
 	public function authorize(\Magento\Payment\Model\InfoInterface $payment, $amount)
 	{
-		if (!$this->hmacIsValid()) {
-			$this->_logger->error('HMAC SHA-256 from Monetra client ticket request failed verification.');
-			throw new LocalizedException(__('Verification of payment information failed.'));
-		}
-
 		$ticket = $this->getInfoInstance()->getAdditionalInformation('ticket');
 		try {
 			$monetra = new MonetraInterface($this->getMonetraConfigData());
-			$response = $monetra->authorize($ticket, $amount);
+			$order = $payment->getOrder();
+			$response = $monetra->authorize($ticket, $amount, $order);
 		} catch (MonetraException $e) {
 			$this->_logger->critical("Error occurred while attempting Monetra authorization. Details: " . $e->getMessage());
 			throw new LocalizedException(__($this->_scopeConfig->getValue('payment/monetra_client_ticket/user_facing_error_message')));
@@ -102,21 +95,17 @@ class ClientTicket extends \Magento\Payment\Model\Method\Cc
 
 	public function capture(\Magento\Payment\Model\InfoInterface $payment, $amount)
 	{
-		$order_num = $payment->getOrder()->getIncrementId();
+		$order = $payment->getOrder();
 		try {
 			$monetra = new MonetraInterface($this->getMonetraConfigData());
 
 			$ttid = $payment->getParentTransactionId();
 
 			if (!empty($ttid)) {
-				$response = $monetra->capture($ttid, $order_num);
+				$response = $monetra->capture($ttid, $order);
 			} else {
-				if (!$this->hmacIsValid()) {
-					$this->_logger->error('HMAC SHA-256 from Monetra client ticket request failed verification.');
-					throw new LocalizedException(__('Verification of payment information failed.'));
-				}
 				$ticket = $this->getInfoInstance()->getAdditionalInformation('ticket');
-				$response = $monetra->sale($ticket, $amount, $order_num);
+				$response = $monetra->sale($ticket, $amount, $order);
 			}
 		} catch (MonetraException $e) {
 			$this->_logger->critical("Error occurred while attempting Monetra capture. Details: " . $e->getMessage());
@@ -183,25 +172,5 @@ class ClientTicket extends \Magento\Payment\Model\Method\Cc
 			'username' => $this->getConfigData('monetra_username'),
 			'password' => $this->_encryptor->decrypt($this->getConfigData('monetra_password'))
 		];
-	}
-
-	private function hmacIsValid()
-	{
-		$info_instance = $this->getInfoInstance();
-
-		$ticket = $info_instance->getAdditionalInformation('ticket');
-		$submitted_hmac = $info_instance->getAdditionalInformation('hmac');
-		$sequence = $info_instance->getAdditionalInformation('sequence');
-		$timestamp = $info_instance->getAdditionalInformation('timestamp');
-
-		$monetra_config = $this->getMonetraConfigData();
-
-		$calculated_hmac_data = $monetra_config['username'] . $sequence . $timestamp . $ticket;
-		$calculated_hmac = hash_hmac('sha256', $calculated_hmac_data, $monetra_config['password']);
-
-		if (strtolower($calculated_hmac) === strtolower($submitted_hmac)) {
-			return true;
-		}
-		return false;
 	}
 }
