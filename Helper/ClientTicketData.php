@@ -52,9 +52,6 @@ class ClientTicketData extends \Magento\Framework\App\Helper\AbstractHelper
 			'payment_form_host' => 'https://' . $this->getConfigValue('monetra_host') . ':' . $this->getConfigValue('monetra_port'),
 			'hmac_fields' => $hmac_fields
 		];
-		if (!empty($req_fields)) {
-			$data['monetra_req_fields'] = $req_fields;
-		}
 		return $data;
 	}
 

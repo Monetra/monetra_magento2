@@ -45,6 +45,10 @@ define(
 
 		paymentFrame.request();
 
+		iframeElement.contentWindow.postMessage(
+			JSON.stringify({ type: "getHeight" }),
+			paymentFormHost
+		);
 
 		order.submit = function() {
 

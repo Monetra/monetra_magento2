@@ -50,10 +50,28 @@ class Form extends \Magento\Payment\Block\Form\Cc
 	{
 		return $this->ticketRequestData->hmac_fields['timestamp'];
 	}
-	
-	public function getMonetraFields()
+
+	public function getCssUrl() 
 	{
-		return $this->ticketRequestData->monetra_req_fields;
+		if (array_key_exists('css-url', $this->ticketRequestData->hmac_fields)) {
+			return $this->ticketRequestData->hmac_fields['css-url'];
+		}
+		return '';
+	}
+
+	public function getExpdateFormat()
+	{
+		return $this->ticketRequestData->hmac_fields['expdate-format'];
+	}
+
+	public function getAutoReload()
+	{
+		return $this->ticketRequestData->hmac_fields['auto-reload'];
+	}
+
+	public function getAutocomplete()
+	{
+		return $this->ticketRequestData->hmac_fields['autocomplete'];
 	}
 
 	public function getMonetraHmac()

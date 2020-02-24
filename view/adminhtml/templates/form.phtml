@@ -10,13 +10,13 @@
 		data-hmac-domain="<?php echo $block->getHostDomain() ?>"
 		data-hmac-sequence="<?php echo $block->getMonetraSequence() ?>"
 		data-hmac-username="<?php echo $block->getMonetraUsername() ?>"
-		data-hmac-css-url=""
+		data-hmac-css-url="<?php echo $block->getCssUrl() ?>"
 		data-hmac-include-cardholdername="no"
 		data-hmac-include-street="no"
 		data-hmac-include-zip="no"
-		data-hmac-expdate-format="single-text"
-		data-hmac-auto-reload="no"
-		data-hmac-autocomplete="no"
+		data-hmac-expdate-format="<?php echo $block->getExpdateFormat() ?>"
+		data-hmac-auto-reload="<?php echo $block->getAutoReload() ?>"
+		data-hmac-autocomplete="<?php echo $block->getAutocomplete() ?>"
 		data-hmac-include-submit-button="no">
 	</iframe>
 	<div id="monetra_client_ticket_response_fields"></div>
