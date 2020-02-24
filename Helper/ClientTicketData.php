@@ -30,7 +30,7 @@ class ClientTicketData extends \Magento\Framework\App\Helper\AbstractHelper
 		];
 		$css_url = $this->getConfigValue('css_url');
 		if (!empty($css_url)) {
-			$hmac_fields['css_url'] = $css_url;
+			$hmac_fields['css-url'] = $css_url;
 		}
 		$hmac_fields = array_merge($hmac_fields, [
 			'include-cardholdername' => 'no',

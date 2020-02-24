@@ -117,6 +117,9 @@ class ClientTicket extends \Magento\Payment\Model\Method\Cc
 			);
 			throw new LocalizedException(__($this->_scopeConfig->getValue('payment/monetra_client_ticket/user_facing_deny_message')));
 		}
+
+		$payment->setTransactionId($response['ttid']);
+
 		return $this;
 	}
 
