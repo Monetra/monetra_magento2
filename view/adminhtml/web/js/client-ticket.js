@@ -1,10 +1,13 @@
+var iframeElement = document.getElementById("monetra-payment-iframe");
+var paymentFormHost = iframeElement.dataset.paymentFormHost;
+
 define(
 	[
 		"jquery",
 		"Magento_Ui/js/modal/alert",
 		"Magento_Sales/order/create/scripts",
 		"Magento_Sales/order/create/form",
-		'https://test.transafe.com:8665/PaymentFrame/PaymentFrame.js'
+		paymentFormHost + '/PaymentFrame/PaymentFrame.js'
 	],
 	function($, alert) {
 
@@ -32,9 +35,6 @@ define(
 
 			submit_order();
 		}
-
-		var iframeElement = document.getElementById("monetra-payment-iframe");
-		var paymentFormHost = iframeElement.dataset.paymentFormHost;
 
 		var paymentFrame = new PaymentFrame(
 			iframeElement.getAttribute('id'),

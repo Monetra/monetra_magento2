@@ -1,9 +1,13 @@
+var method_code = 'monetra_client_ticket';
+var iframe_data = window.checkoutConfig.payment[method_code];
+var payment_form_host = iframe_data.payment_form_host;
+
 define(
 	[
 		'Magento_Payment/js/view/payment/cc-form',
 		'Magento_Ui/js/modal/alert',
 		'Magento_Checkout/js/model/quote',
-		'https://test.transafe.com:8665/PaymentFrame/PaymentFrame.js'
+		payment_form_host + '/PaymentFrame/PaymentFrame.js'
 	],
 	function (Component, alert, quote) {
 		'use strict';
@@ -13,7 +17,7 @@ define(
 				template: 'Monetra_Monetra/payment/client-ticket-form'
 			},
 			getCode: function() {
-				return 'monetra_client_ticket';
+				return method_code;
 			},
 			context: function() {
 				return this;
@@ -51,7 +55,6 @@ define(
 
 			populateIframeAttributes: function(target) {
 
-				var iframe_data = window.checkoutConfig.payment[this.getCode()];
 				var hmac_fields = iframe_data.hmac_fields;
 				var paymentFrame;
 
