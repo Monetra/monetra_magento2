@@ -48,8 +48,17 @@ class ClientTicketData extends \Magento\Framework\App\Helper\AbstractHelper
 
 		$hmac_fields = array_merge(['hmacsha256' => $hmac], $hmac_fields);
 
+		$payment_server = $this->getConfigValue('payment_server');
+		if ($payment_server === 'custom') {
+			$payment_form_host = 'https://' . $this->getConfigValue('monetra_host') . ':' . $this->getConfigValue('monetra_port');
+		} elseif ($payment_server === 'live') {
+			$payment_form_host = 'https://' . MonetraInterface::LIVE_SERVER_URL . ':' . MonetraInterface::LIVE_SERVER_PORT;
+		} else {
+			$payment_form_host = 'https://' . MonetraInterface::TEST_SERVER_URL . ':' . MonetraInterface::TEST_SERVER_PORT;
+		}
+
 		$data = [
-			'payment_form_host' => 'https://' . $this->getConfigValue('monetra_host') . ':' . $this->getConfigValue('monetra_port'),
+			'payment_form_host' => $payment_form_host,
 			'hmac_fields' => $hmac_fields
 		];
 		return $data;

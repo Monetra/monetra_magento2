@@ -19,6 +19,10 @@
 					<label>New Order Status</label>
 					<source_model>Magento\Sales\Model\Config\Source\Order\Status\Processing</source_model>
 				</field>
+				<field id="payment_server" translate="label" type="select" showInDefault="1" showInWebsite="1" showInStore="0">
+					<label>Payment Server</label>
+					<source_model>Monetra\Monetra\Model\Source\PaymentServer</source_model>
+				</field>
 				<field id="monetra_host" translate="label" type="text" showInDefault="1" showInWebsite="1" showInStore="0">
 					<label>Monetra Host</label>
 				</field>

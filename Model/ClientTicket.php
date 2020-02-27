@@ -169,9 +169,20 @@ class ClientTicket extends \Magento\Payment\Model\Method\Cc
 
 	private function getMonetraConfigData()
 	{
+		$payment_server = $this->getConfigData('payment_server');
+		if ($payment_server === 'custom') {
+			$host = $this->getConfigData('monetra_host');
+			$port = $this->getConfigData('monetra_port');
+		} elseif ($payment_server === 'live') {
+			$host = MonetraInterface::LIVE_SERVER_URL;
+			$port = MonetraInterface::LIVE_SERVER_PORT;
+		} else {
+			$host = MonetraInterface::TEST_SERVER_URL;
+			$port = MonetraInterface::TEST_SERVER_PORT;
+		}
 		return [
-			'host' => $this->getConfigData('monetra_host'),
-			'port' => $this->getConfigData('monetra_port'),
+			'host' => $host,
+			'port' => $port,
 			'username' => $this->getConfigData('monetra_username'),
 			'password' => $this->_encryptor->decrypt($this->getConfigData('monetra_password'))
 		];

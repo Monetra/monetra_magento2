@@ -5,6 +5,13 @@ use \Monetra\Monetra\Helper\MonetraException;
 
 class MonetraInterface
 {
+
+	const TEST_SERVER_URL = 'test.transafe.com';
+	const TEST_SERVER_PORT = '443';
+
+	const LIVE_SERVER_URL = 'post.live.transafe.com';
+	const LIVE_SERVER_PORT = '443';
+
 	private $origin;
 	private $username;
 	private $password;
