@@ -187,4 +187,8 @@ class ClientTicket extends \Magento\Payment\Model\Method\Cc
 			'password' => $this->_encryptor->decrypt($this->getConfigData('monetra_password'))
 		];
 	}
+
+	public function isAvailable(\Magento\Quote\Api\Data\CartInterface $quote = NULL){
+    	       return $this->getConfigData('active') || $this->getConfigData('active');
+    	}
 }
