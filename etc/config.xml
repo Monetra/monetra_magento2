@@ -18,7 +18,9 @@
 		<dev>
 		  <js>
 		    <minify_exclude>
-		      PaymentFrame.js
+		      <monetra>
+			PaymentFrame/PaymentFrame.js
+		      </monetra>
 		    </minify_exclude>
 		  </js>
 		</dev>
