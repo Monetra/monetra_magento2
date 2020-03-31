@@ -18,12 +18,18 @@
 		<dev>
 		  <js>
 		    <minify_exclude>
-		      <monetra>
-			PaymentFrame/PaymentFrame.js
-		      </monetra>
+		      <monetra_js>
+			/PaymentFrame/
+		      </monetra_js>
 		    </minify_exclude>
 		  </js>
+		  <css>
+		    <minify_exclude>
+		      <monetra_css>
+			/PaymentFrame/
+		      </monetra_css>
+		    </minify_exclude>
+		  </css>
 		</dev>
-		
 	</default>
 </config>
