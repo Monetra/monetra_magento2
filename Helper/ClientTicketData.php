@@ -16,8 +16,8 @@ class ClientTicketData extends \Magento\Framework\App\Helper\AbstractHelper
 
 	public function generateTicketRequestData()
 	{
-		$username = $this->getConfigValue('monetra_username');
-		$password = $this->_encryptor->decrypt($this->getConfigValue('monetra_password'));
+		$username = $this->getConfigValue('monetra_ticket_username');
+		$password = $this->_encryptor->decrypt($this->getConfigValue('monetra_ticket_password'));
 
 		$req_sequence = mt_rand();
 		$req_timestamp = time();
@@ -50,7 +50,7 @@ class ClientTicketData extends \Magento\Framework\App\Helper\AbstractHelper
 
 		$payment_server = $this->getConfigValue('payment_server');
 		if ($payment_server === 'custom') {
-			$payment_form_host = 'https://' . $this->getConfigValue('monetra_host') . ':' . $this->getConfigValue('monetra_port');
+			$payment_form_host = 'https://' . $this->getConfigValue('monetra_host') . ':' . $this->getConfigValue('monetra_ticket_port');
 		} elseif ($payment_server === 'live') {
 			$payment_form_host = 'https://' . MonetraInterface::LIVE_SERVER_URL . ':' . MonetraInterface::LIVE_SERVER_PORT;
 		} else {

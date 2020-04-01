@@ -4,60 +4,70 @@
 		<section id="payment">
 			<group id="monetra_client_ticket" translate="label" type="text" sortOrder="500" showInDefault="1" showInWebsite="1" showInStore="1">
 				<label>Monetra PaymentFrame</label>
-				<field id="active" translate="label" type="select" showInDefault="1" showInWebsite="1" showInStore="0">
+				<field id="active" translate="label" type="select" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="0">
 					<label>Enabled</label>
 					<source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
 				</field>
-				<field id="payment_action" translate="label" type="select" showInDefault="1" showInWebsite="1" showInStore="0">
+				<field id="payment_action" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
 					<label>Payment Action</label>
 					<source_model>Monetra\Monetra\Model\Source\PaymentAction</source_model>
 				</field>
-				<field id="title" translate="label" type="text" showInDefault="1" showInWebsite="1" showInStore="1">
+				<field id="title" translate="label" type="text" sortOrder="15" showInDefault="1" showInWebsite="1" showInStore="1">
 					<label>Title</label>
 				</field>
-				<field id="order_status" translate="label" type="select" showInDefault="1" showInWebsite="1" showInStore="0">
+				<field id="order_status" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
 					<label>New Order Status</label>
 					<source_model>Magento\Sales\Model\Config\Source\Order\Status\Processing</source_model>
 				</field>
-				<field id="payment_server" translate="label" type="select" showInDefault="1" showInWebsite="1" showInStore="0">
+				<field id="payment_server" translate="label" type="select" sortOrder="25" showInDefault="1" showInWebsite="1" showInStore="0">
 					<label>Payment Server</label>
 					<source_model>Monetra\Monetra\Model\Source\PaymentServer</source_model>
 				</field>
-				<field id="monetra_host" translate="label" type="text" showInDefault="1" showInWebsite="1" showInStore="0">
+				<field id="monetra_host" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="0">
 					<label>Monetra Host</label>
 				</field>
-				<field id="monetra_port" translate="label" type="text" showInDefault="1" showInWebsite="1" showInStore="0">
-					<label>Monetra Port</label>
+				<field id="monetra_port" translate="label" type="text" sortOrder="35" showInDefault="1" showInWebsite="1" showInStore="0">
+					<label>Monetra Post Port</label>
 				</field>
-				<field id="monetra_username" translate="label" type="text" showInDefault="1" showInWebsite="1" showInStore="0">
-					<label>Monetra Username</label>
+				<field id="monetra_username" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="0">
+					<label>Monetra Post Username</label>
 				</field>
-				<field id="monetra_password" translate="label" type="obscure" showInDefault="1" showInWebsite="1" showInStore="0">
-					<label>Monetra Password</label>
+				<field id="monetra_password" translate="label" type="obscure" sortOrder="45" showInDefault="1" showInWebsite="1" showInStore="0">
+					<label>Monetra Post Password</label>
 					<backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
 				</field>
-				<field id="expdate_format" translate="label" type="select" showInDefault="1" showInWebsite="1" showInStore="0">
+				<field id="monetra_ticket_port" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="0">
+					<label>Monetra Ticket Port</label>
+				</field>
+				<field id="monetra_ticket_username" translate="label" type="text" sortOrder="55" showInDefault="1" showInWebsite="1" showInStore="0">
+					<label>Monetra Ticket Username</label>
+				</field>
+				<field id="monetra_ticket_password" translate="label" type="obscure" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="0">
+					<label>Monetra Ticket Password</label>
+					<backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+				</field>
+				<field id="expdate_format" translate="label" type="select" sortOrder="65" showInDefault="1" showInWebsite="1" showInStore="0">
 					<label>Expiration Date Format</label>
 					<source_model>Monetra\Monetra\Model\Source\ExpDateFormat</source_model>
 				</field>
-				<field id="auto_reload" translate="label" type="select" showInDefault="1" showInWebsite="1" showInStore="0">
+				<field id="auto_reload" translate="label" type="select" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="0">
 					<label>Auto-reload</label>
 					<source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
 				</field>
-				<field id="autocomplete" translate="label" type="select" showInDefault="1" showInWebsite="1" showInStore="0">
+				<field id="autocomplete" translate="label" type="select" sortOrder="75" showInDefault="1" showInWebsite="1" showInStore="0">
 					<label>Autocomplete</label>
 					<source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
 				</field>
-				<field id="css_url" translate="label" type="text" showInDefault="1" showInWebsite="1" showInStore="0">
+				<field id="css_url" translate="label" type="text" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="0">
 					<label>CSS Path</label>
 				</field>
-				<field id="user_facing_deny_message" translate="label" type="textarea" showInDefault="1" showInWebsite="1" showInStore="0">
+				<field id="user_facing_deny_message" translate="label" sortOrder="85" type="textarea" showInDefault="1" showInWebsite="1" showInStore="0">
 					<label>User-Facing Payment Denial Message</label>
 				</field>
-				<field id="user_facing_error_message" translate="label" type="textarea" showInDefault="1" showInWebsite="1" showInStore="0">
+				<field id="user_facing_error_message" translate="label" sortOrder="90" type="textarea" showInDefault="1" showInWebsite="1" showInStore="0">
 					<label>User-Facing Payment Error Message</label>
 				</field>
-				<field id="sort_order" translate="label" type="text" showInDefault="1" showInWebsite="1" showInStore="0">
+				<field id="sort_order" translate="label" type="text" sortOrder="95" showInDefault="1" showInWebsite="1" showInStore="0">
 					<label>Sort Order</label>
 					<frontend_class>validate-number</frontend_class>
 				</field>
