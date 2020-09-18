@@ -18,9 +18,9 @@ class MonetraInterface
 
 	public function __construct($config_data)
 	{
-		$this->origin = 'https://' . $config_data['host'] . ':' . $config_data['port'];
-		$this->username = $config_data['username'];
-		$this->password = $config_data['password'];
+		$this->origin = 'https://' . $config_data['host'] . ':' . $config_data['monetra_port'];
+		$this->username = $config_data['monetra_username'];
+		$this->password = $config_data['monetra_password'];
 	}
 
 	public function authorize($ticket, $amount, $order)

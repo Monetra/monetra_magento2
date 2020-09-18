@@ -3,7 +3,7 @@
 	<default>
 		<payment>
 			<monetra_client_ticket>
-				<active>0</active>
+				<active>1</active>
 				<model>Monetra\Monetra\Model\ClientTicket</model>
 				<order_status>processing</order_status>
 				<payment_action>authorize</payment_action>
@@ -15,5 +15,24 @@
 				<user_facing_error_message>We experienced a problem while attempting to process your payment. Please contact support for more information.</user_facing_error_message>
 			</monetra_client_ticket>
 		</payment>
+		<dev>
+		  <js>
+		    <minify_exclude>
+		      <monetra2>
+			PaymentFrame/PaymentFrame.js
+		      </monetra2>
+		      <monetra2>
+			PaymentFrame/PaymentFrameInternal.js
+		      </monetra2>
+		    </minify_exclude>
+		  </js>
+		  <css>
+		    <minify_exclude>
+		      <monetra>
+			PaymentFrame.css
+		      </monetra>
+		    </minify_exclude>
+		  </css>
+		</dev>
 	</default>
 </config>

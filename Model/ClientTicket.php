@@ -172,19 +172,31 @@ class ClientTicket extends \Magento\Payment\Model\Method\Cc
 		$payment_server = $this->getConfigData('payment_server');
 		if ($payment_server === 'custom') {
 			$host = $this->getConfigData('monetra_host');
-			$port = $this->getConfigData('monetra_port');
+			$monetra_port = $this->getConfigData('monetra_port');
+			$monetra_ticket_port = $this->getConfigData('monetra_ticket_port');
 		} elseif ($payment_server === 'live') {
 			$host = MonetraInterface::LIVE_SERVER_URL;
-			$port = MonetraInterface::LIVE_SERVER_PORT;
+			$monetra_port = MonetraInterface::LIVE_SERVER_PORT;
+			$monetra_ticket_port = MonetraInterface::LIVE_SERVER_PORT;
 		} else {
 			$host = MonetraInterface::TEST_SERVER_URL;
-			$port = MonetraInterface::TEST_SERVER_PORT;
+			$monetra_port = MonetraInterface::TEST_SERVER_PORT;
+			$monetra_ticket_port = MonetraInterface::TEST_SERVER_PORT;
 		}
 		return [
 			'host' => $host,
-			'port' => $port,
-			'username' => $this->getConfigData('monetra_username'),
-			'password' => $this->_encryptor->decrypt($this->getConfigData('monetra_password'))
+			'monetra_port' => $monetra_port,
+			'monetra_username' => $this->getConfigData('monetra_username'),
+			'monetra_password' => $this->_encryptor->decrypt($this->getConfigData('monetra_password')),
+			'monetra_ticket_port' => $monetra_ticket_port,
+			'monetra_ticket_username' => $this->getConfigData('monetra_ticket_username'),
+			'monetra_ticket_password' => $this->_encryptor->decrypt($this->getConfigData('monetra_ticket_password'))
 		];
 	}
+
+	public function isAvailable(\Magento\Quote\Api\Data\CartInterface $quote = NULL){
+    	       return $this->getConfigData('active') || $this->getConfigData('active');
+    	}
+
+
 }
