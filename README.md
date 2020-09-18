@@ -25,13 +25,25 @@ in the list of payment methods. Click on the arrow icon to expand the configurat
 
 - **New Order Status**: The default status that will be assigned to newly placed orders.
 
-- **Monetra Host**: Hostname (FQDN) of the Monetra server that your Magento instance will be sending transactions to.
+- **Payment Server**: If you are using the TranSafe payment gateway, select either TranSafe Test Server or TranSafe Live/Production Server. Otherwise, select custom, and fill in the two fields below.
 
-- **Monetra Port**: Port number on the Monetra server that transactions will be sent to. Usually this will be 8665.
+- **Monetra Host**: (*Only appears if the Payment Server option is set to Custom*) Hostname (FQDN) of the Monetra server that your Magento instance will be sending transactions to.
 
-- **Monetra Username**: The username of the Monetra user (for authentication on the Monetra server).
+- **Monetra Port**: (*Only appears if the Payment Server option is set to Custom*) Port number on the Monetra server that transactions will be sent to. Usually this will be 8665.
 
-- **Monetra Password**: The password of the Monetra user (for authentication on the Monetra server). Stored encrypted via `Magento\Config\Model\Config\Backend\Encrypted`
+- **Separate users for ticket request and payment (POST) request**: If you would like to use separate subusers for the ticket request (when the payment data is submitted to the payment server to generate a ticket) and the payment POST request (when the ticket and all other payment data is submitted to the payment server for processing), select Yes here. Otherwise, select No.
+
+- **Monetra Username**: (*Only appears if the Separate Users option is set to No*) The username of the Monetra user (for authentication on the Monetra server).
+
+- **Monetra Password**: (*Only appears if the Separate Users option is set to No*) The password of the Monetra user (for authentication on the Monetra server). Stored encrypted via `Magento\Config\Model\Config\Backend\Encrypted`
+
+- **Monetra Ticket Username**: (*Only appears if the Separate Users option is set to Yes*) The username of the Monetra user used for the ticket request.
+
+- **Monetra Ticket Password**: (*Only appears if the Separate Users option is set to Yes*) The password of the Monetra user used for the ticket request. Stored encrypted via `Magento\Config\Model\Config\Backend\Encrypted`
+
+- **Monetra POST Username**: (*Only appears if the Separate Users option is set to Yes*) The username of the Monetra user used for the payment (POST) request.
+
+- **Monetra POST Password**: (*Only appears if the Separate Users option is set to Yes*) The password of the Monetra user used for the payment (POST) request. Stored encrypted via `Magento\Config\Model\Config\Backend\Encrypted`
 
 - **Expiration Date Format**: Format of the expiration date input on the payment form.
 

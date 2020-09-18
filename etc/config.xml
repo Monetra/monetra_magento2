@@ -10,6 +10,7 @@
 				<title>Credit Card (Monetra PaymentFrame)</title>
 				<expdate_format>single-text</expdate_format>
 				<auto_reload>1</auto_reload>
+				<separate_users>0</separate_users>
 				<autocomplete>0</autocomplete>
 				<user_facing_deny_message>There was a problem with the provided credit card. Please try a different one or contact support for more information.</user_facing_deny_message>
 				<user_facing_error_message>We experienced a problem while attempting to process your payment. Please contact support for more information.</user_facing_error_message>

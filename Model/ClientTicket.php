@@ -79,7 +79,6 @@ class ClientTicket extends \Magento\Payment\Model\Method\Cc
 			$this->_logger->critical("Error occurred while attempting Monetra authorization. Details: " . $e->getMessage());
 			throw new LocalizedException(__($this->_scopeConfig->getValue('payment/monetra_client_ticket/user_facing_error_message')));
 		}
-
 		if ($response['code'] !== 'AUTH') {
 			$this->_logger->info(
 				sprintf('Monetra authorization failed for TTID %d. Verbiage: %s', $response['ttid'], $response['verbiage'])
@@ -173,30 +172,34 @@ class ClientTicket extends \Magento\Payment\Model\Method\Cc
 		if ($payment_server === 'custom') {
 			$host = $this->getConfigData('monetra_host');
 			$monetra_port = $this->getConfigData('monetra_port');
-			$monetra_ticket_port = $this->getConfigData('monetra_ticket_port');
 		} elseif ($payment_server === 'live') {
 			$host = MonetraInterface::LIVE_SERVER_URL;
 			$monetra_port = MonetraInterface::LIVE_SERVER_PORT;
-			$monetra_ticket_port = MonetraInterface::LIVE_SERVER_PORT;
 		} else {
 			$host = MonetraInterface::TEST_SERVER_URL;
 			$monetra_port = MonetraInterface::TEST_SERVER_PORT;
-			$monetra_ticket_port = MonetraInterface::TEST_SERVER_PORT;
 		}
+		
+		$separate_users = $this->getConfigData('separate_users');
+		if ($separate_users) {
+			$username = $this->getConfigData('monetra_post_username');
+			$password = $this->getConfigData('monetra_post_password');
+		} else {
+			$username = $this->getConfigData('monetra_username');
+			$password = $this->getConfigData('monetra_password');
+		}
+
 		return [
 			'host' => $host,
 			'monetra_port' => $monetra_port,
-			'monetra_username' => $this->getConfigData('monetra_username'),
-			'monetra_password' => $this->_encryptor->decrypt($this->getConfigData('monetra_password')),
-			'monetra_ticket_port' => $monetra_ticket_port,
-			'monetra_ticket_username' => $this->getConfigData('monetra_ticket_username'),
-			'monetra_ticket_password' => $this->_encryptor->decrypt($this->getConfigData('monetra_ticket_password'))
+			'monetra_username' => $username,
+			'monetra_password' => $this->_encryptor->decrypt($password)
 		];
 	}
 
 	public function isAvailable(\Magento\Quote\Api\Data\CartInterface $quote = NULL){
-    	       return $this->getConfigData('active') || $this->getConfigData('active');
-    	}
+		return $this->getConfigData('active') || $this->getConfigData('active');
+	}
 
 
 }
