@@ -5,6 +5,8 @@
 			<monetra_client_ticket>
 				<active>1</active>
 				<model>Monetra\Monetra\Model\ClientTicket</model>
+				<can_authorize_vault>1</can_authorize_vault>
+				<can_capture_vault>1</can_capture_vault>
 				<order_status>processing</order_status>
 				<payment_action>authorize</payment_action>
 				<title>Credit Card (Monetra PaymentFrame)</title>
@@ -15,25 +17,30 @@
 				<user_facing_deny_message>There was a problem with the provided credit card. Please try a different one or contact support for more information.</user_facing_deny_message>
 				<user_facing_error_message>We experienced a problem while attempting to process your payment. Please contact support for more information.</user_facing_error_message>
 			</monetra_client_ticket>
+			<monetra_account_vault>
+				<model>MonetraAccountVaultFacade</model>
+				<title>Stored Accounts (Monetra)</title>
+				<active>1</active>
+			</monetra_account_vault>
 		</payment>
 		<dev>
-		  <js>
-		    <minify_exclude>
-		      <monetra2>
-			PaymentFrame/PaymentFrame.js
-		      </monetra2>
-		      <monetra2>
-			PaymentFrame/PaymentFrameInternal.js
-		      </monetra2>
-		    </minify_exclude>
-		  </js>
-		  <css>
-		    <minify_exclude>
-		      <monetra>
-			PaymentFrame.css
-		      </monetra>
-		    </minify_exclude>
-		  </css>
+			<js>
+				<minify_exclude>
+					<monetra2>
+						PaymentFrame/PaymentFrame.js
+					</monetra2>
+					<monetra2>
+						PaymentFrame/PaymentFrameInternal.js
+					</monetra2>
+				</minify_exclude>
+			</js>
+			<css>
+				<minify_exclude>
+					<monetra>
+						PaymentFrame.css
+					</monetra>
+				</minify_exclude>
+			</css>
 		</dev>
 	</default>
 </config>

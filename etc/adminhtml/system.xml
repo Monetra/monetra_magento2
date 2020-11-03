@@ -104,6 +104,13 @@
 					<frontend_class>validate-number</frontend_class>
 				</field>
 			</group>
+			<group id="monetra_account_vault" translate="label" type="text" sortOrder="501" showInDefault="1" showInWebsite="1" showInStore="1">
+				<label>Monetra Account Vault</label>
+				<field id="active" translate="label" type="select" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="0">
+					<label>Enabled</label>
+					<source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+				</field>
+			</group>
 		</section>
 	</system>
 </config>

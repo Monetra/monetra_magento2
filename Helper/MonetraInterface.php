@@ -2,8 +2,9 @@
 
 namespace Monetra\Monetra\Helper;
 use \Monetra\Monetra\Helper\MonetraException;
+use \Monetra\Monetra\Model\ClientTicket;
 
-class MonetraInterface
+class MonetraInterface extends \Magento\Framework\App\Helper\AbstractHelper
 {
 
 	const TEST_SERVER_URL = 'test.transafe.com';
@@ -15,26 +16,34 @@ class MonetraInterface
 	private $origin;
 	private $username;
 	private $password;
+	private $encryptor;
 
-	public function __construct($config_data)
+	public function __construct(
+		\Magento\Framework\App\Helper\Context $context,
+		\Magento\Framework\Encryption\EncryptorInterface $encryptor
+	)
 	{
+		parent::__construct($context);
+		$this->encryptor = $encryptor;
+
+		$config_data = $this->getMonetraConfigData();
+
 		$this->origin = 'https://' . $config_data['host'] . ':' . $config_data['monetra_port'];
 		$this->username = $config_data['monetra_username'];
 		$this->password = $config_data['monetra_password'];
 	}
 
-	public function authorize($ticket, $amount, $order)
+	public function authorize($account_data, $amount, $order, $tokenize = false)
 	{
 		$cardholdername = $order->getCustomerName();
 		$address = $order->getBillingAddress();
 		$street = $address->getStreet1();
 		$zip = $address->getPostcode();
 
+		$account_data['cardholdername'] = $cardholdername;
+
 		$data = [
-			'account_data' => [
-				'cardshieldticket' => $ticket,
-				'cardholdername' => $cardholdername
-			],
+			'account_data' => $account_data,
 			'verification' => [
 				'street' => strval($street),
 				'zip' => strval($zip)
@@ -43,6 +52,10 @@ class MonetraInterface
 				'amount' => strval($amount)
 			]
 		];
+
+		if ($tokenize) {
+			$data['tokenize'] = 'yes';
+		}
 		
 		return $this->request('POST', 'transaction/preauth', $data);
 	}
@@ -56,7 +69,7 @@ class MonetraInterface
 		return $this->request('PATCH', 'transaction/' . $ttid . '/complete', $data);
 	}
 
-	public function sale($ticket, $amount, $order)
+	public function sale($account_data, $amount, $order, $tokenize = false)
 	{
 		$order_num = $order->getIncrementId();
 		$cardholdername = $order->getCustomerName();
@@ -64,11 +77,10 @@ class MonetraInterface
 		$street = $address->getStreet1();
 		$zip = $address->getPostcode();
 
+		$account_data['cardholdername'] = $cardholdername;
+
 		$data = [
-			'account_data' => [
-				'cardshieldticket' => $ticket,
-				'cardholdername' => $cardholdername
-			],
+			'account_data' => $account_data,
 			'verification' => [
 				'street' => strval($street),
 				'zip' => strval($zip)
@@ -81,12 +93,31 @@ class MonetraInterface
 			]
 		];
 
+		if ($tokenize) {
+			$data['tokenize'] = 'yes';
+		}
+
 		return $this->request('POST', 'transaction/purchase', $data);
 	}
 
 	public function void($ttid)
 	{
 		return $this->request('DELETE', 'transaction/' . $ttid . '/void');
+	}
+
+	public function getTokenExpirationDate($token)
+	{
+		$response = $this->request('GET', 'vault/account/' . $token);
+		if ($response['code'] !== 'SUCCESS') {
+			return "";
+		}
+		return $response['report'][0]['expdate'];
+	}
+
+	public function deleteToken($token)
+	{
+		$response = $this->request('DELETE', 'vault/account/' . $token);
+		return $response;
 	}
 
 	public function refund($ttid, $amount)
@@ -170,6 +201,42 @@ class MonetraInterface
 		curl_close($curl);
 
 		return json_decode($response, true);
+	}
+
+	private function getMonetraConfigData()
+	{
+		$payment_server = $this->getConfigValue('payment_server');
+		if ($payment_server === 'custom') {
+			$host = $this->getConfigValue('monetra_host');
+			$monetra_port = $this->getConfigValue('monetra_port');
+		} elseif ($payment_server === 'live') {
+			$host = self::LIVE_SERVER_URL;
+			$monetra_port = self::LIVE_SERVER_PORT;
+		} else {
+			$host = self::TEST_SERVER_URL;
+			$monetra_port = self::TEST_SERVER_PORT;
+		}
+		
+		$separate_users = $this->getConfigValue('separate_users');
+		if ($separate_users) {
+			$username = $this->getConfigValue('monetra_post_username');
+			$password = $this->getConfigValue('monetra_post_password');
+		} else {
+			$username = $this->getConfigValue('monetra_username');
+			$password = $this->getConfigValue('monetra_password');
+		}
+
+		return [
+			'host' => $host,
+			'monetra_port' => $monetra_port,
+			'monetra_username' => $username,
+			'monetra_password' => $this->encryptor->decrypt($password)
+		];
+	}
+
+	private function getConfigValue($key)
+	{
+		return $this->scopeConfig->getValue('payment/' . ClientTicket::METHOD_CODE . '/' . $key, \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
 	}
 
 }

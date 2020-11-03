@@ -3,6 +3,7 @@
 namespace Monetra\Monetra\Model;
 
 use Magento\Checkout\Model\ConfigProviderInterface;
+use \Monetra\Monetra\Model\ClientTicket;
 
 class ConfigProvider implements ConfigProviderInterface
 {
@@ -18,7 +19,7 @@ class ConfigProvider implements ConfigProviderInterface
 	{
 		return [
 			'payment' => [
-				'monetra_client_ticket' => $this->ticketRequestData
+				ClientTicket::METHOD_CODE => $this->ticketRequestData
 			]
 		];
 	}

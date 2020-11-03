@@ -5,17 +5,29 @@ var payment_form_host = iframe_data.payment_form_host;
 define(
 	[
 		'Magento_Payment/js/view/payment/cc-form',
+		'Magento_Vault/js/view/payment/vault-enabler',
 		'Magento_Ui/js/modal/alert',
 		'Magento_Checkout/js/model/quote',
 		payment_form_host + '/PaymentFrame/PaymentFrame.js'
 	],
-	function (Component, alert, quote) {
+	function (Component, VaultEnabler, alert, quote) {
 		'use strict';
 
 		return Component.extend({
 			defaults: {
 				template: 'Monetra_Monetra/payment/client-ticket-form'
 			},
+
+			storeAccountSelected: true,
+
+			initialize: function () {
+				var self = this;
+				self._super();
+				this.vaultEnabler = new VaultEnabler();
+				this.vaultEnabler.setPaymentCode(this.getVaultCode());
+				return self;
+			},
+
 			getCode: function() {
 				return method_code;
 			},
@@ -41,10 +53,22 @@ define(
 			},
 
 			getData: function() {
-				return {
+				var data = {
 					'method': this.item.method,
 					'additional_data': this.ticketFields
 				};
+				if (iframe_data.vault_active) {
+					this.vaultEnabler.visitAdditionalData(data);
+				}
+				return data;
+			},
+
+			isVaultEnabled: function () {
+				return iframe_data.vault_active == 1;
+			},
+
+			getVaultCode: function () {
+				return 'monetra_account_vault';
 			},
 
 			ticketFields: {},

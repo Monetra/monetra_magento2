@@ -28,6 +28,17 @@
 				'gateway': getCode(),
 			}, 'validation':[]}">
 			<iframe style="border:none;" id="monetra-payment-iframe" data-bind="afterRender: populateIframeAttributes"></iframe>
+			<!-- ko if: (isVaultEnabled())-->
+				<div class="field choice">
+					<input type="checkbox"
+						name="vault[is_enabled]"
+						class="checkbox"
+						data-bind="attr: {'id': getCode() + '_enable_vault'}, checked: vaultEnabler.isActivePaymentTokenEnabler"/>
+					<label class="label" data-bind="attr: {'for': getCode() + '_enable_vault'}">
+						<span><!-- ko i18n: 'Save for later use.'--><!-- /ko --></span>
+					</label>
+				</div>
+			<!-- /ko -->
 		</form>
 		<div class="checkout-agreements-block">
 			<!-- ko foreach: $parent.getRegion('before-place-order') -->
