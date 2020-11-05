@@ -276,6 +276,8 @@ class ClientTicket extends \Magento\Payment\Model\Method\Cc
 			$payment->setExtensionAttributes($extensionAttributes);
 		}
 
+		syslog(\LOG_INFO, "Should be adding the token...");
+
 		$extensionAttributes->setVaultPaymentToken($paymentToken);
 		
 	}

@@ -2,9 +2,11 @@
 
 namespace Monetra\Monetra\Block;
 
+use \Magento\Vault\Model\Ui\VaultConfigProvider;
+
 class Form extends \Magento\Payment\Block\Form\Cc
 {
-	private $ticketRequestData;
+	private $ticketRequestData, $vaultEnabled;
 
 	public function __construct(
 		\Magento\Framework\View\Element\Template\Context $context,
@@ -13,6 +15,7 @@ class Form extends \Magento\Payment\Block\Form\Cc
 		array $data = []
 	) {
 		parent::__construct($context, $paymentConfig, $data);
+		$this->vaultEnabled = $clientTicketData->getVaultConfigValue('active');
 		$this->ticketRequestData = (object) $clientTicketData->generateTicketRequestData();
 	}
 
@@ -77,5 +80,15 @@ class Form extends \Magento\Payment\Block\Form\Cc
 	public function getMonetraHmac()
 	{
 		return $this->ticketRequestData->hmac_fields['hmacsha256'];
+	}
+
+	public function isVaultEnabled()
+	{
+		return $this->vaultEnabled;
+	}
+
+	public function getVaultIsActiveCode()
+	{
+		return VaultConfigProvider::IS_ACTIVE_CODE;
 	}
 }

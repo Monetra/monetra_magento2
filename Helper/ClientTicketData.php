@@ -79,7 +79,7 @@ class ClientTicketData extends \Magento\Framework\App\Helper\AbstractHelper
 		return $this->scopeConfig->getValue('payment/' . ClientTicket::METHOD_CODE . '/' . $key, \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
 	}
 
-	private function getVaultConfigValue($key)
+	public function getVaultConfigValue($key)
 	{
 		return $this->scopeConfig->getValue('payment/' . ClientTicket::VAULT_METHOD_CODE . '/' . $key, \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
 	}
