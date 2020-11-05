@@ -48,6 +48,7 @@ class ClientTicket extends \Magento\Payment\Model\Method\Cc
 		\Magento\Framework\Stdlib\DateTime\TimezoneInterface $localeDate,
 		\Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
 		\Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
+		\Magento\Framework\Encryption\EncryptorInterface $encryptor,
 		\Monetra\Monetra\Helper\MonetraInterface $monetraInterface,
 		array $data = []
 	) {
@@ -68,6 +69,7 @@ class ClientTicket extends \Magento\Payment\Model\Method\Cc
 		$this->paymentTokenFactory = $paymentTokenFactory;
 		$this->tokenManagement = $tokenManagement;
 		$this->monetraInterface = $monetraInterface;
+		$this->encryptor = $encryptor;
 	}
 
 	public function validate()
@@ -79,8 +81,14 @@ class ClientTicket extends \Magento\Payment\Model\Method\Cc
 	{
 		$additional_data = new DataObject($data->getAdditionalData());
 		$info_instance = $this->getInfoInstance();
-		$info_instance->setAdditionalInformation('ticket', $additional_data->getData('ticket_response_ticket'));
-		
+
+		$ticket = $additional_data->getData('ticket_response_ticket');
+
+		if (!empty($ticket)) {
+			$this->validateResponseHmac($additional_data, $ticket);
+			$info_instance->setAdditionalInformation('ticket', $ticket);
+		}
+
 		if ($this->vaultIsActive()) {
 
 			$tokenize_selected = $additional_data->getData('is_active_payment_token_enabler');
@@ -224,6 +232,11 @@ class ClientTicket extends \Magento\Payment\Model\Method\Cc
 		return $this;
 	}
 
+	public function isAvailable(\Magento\Quote\Api\Data\CartInterface $quote = NULL)
+	{
+		return $this->getConfigData('active') || $this->getConfigData('active');
+	}
+
 	private function addTokenToVault($payment, $response)
 	{
 		$last_four = substr($response['account'], -4);
@@ -249,7 +262,7 @@ class ClientTicket extends \Magento\Payment\Model\Method\Cc
 			'maskedCC' => $last_four,
 			'expirationDate' => $formattedExpirationDate
 		]));
-		$paymentToken->setExpiresAt($expirationDate->add(DateInterval::createFromDateString('+1 month')));
+		$paymentToken->setExpiresAt($expirationDate->add(\DateInterval::createFromDateString('+1 month')));
 		$paymentToken->setIsActive(true);
 		$paymentToken->setIsVisible(true);
 		
@@ -263,6 +276,31 @@ class ClientTicket extends \Magento\Payment\Model\Method\Cc
 		
 	}
 
+	private function validateResponseHmac($additional_data, $ticket)
+	{
+		$separate_users = $this->getConfigData('separate_users');
+		if ($separate_users) {
+			$password = $this->encryptor->decrypt($this->getConfigData('monetra_ticket_password'));
+		} else {
+			$password = $this->encryptor->decrypt($this->getConfigData('monetra_password'));
+		}
+
+		$username = $additional_data->getData('ticket_request_username');
+		$sequence = $additional_data->getData('ticket_request_sequence');
+		$timestamp = $additional_data->getData('ticket_request_timestamp');
+
+		$response_hmac = $additional_data->getData('ticket_response_hmac');
+
+		$data_to_hash = $username . $sequence . $timestamp . $ticket;
+
+		$hmac_to_compare = hash_hmac('sha256', $data_to_hash, $password);
+
+		if (strtolower($response_hmac) !== strtolower($hmac_to_compare)) {
+			$this->_logger->critical("Unable to validate ticket response HMAC");
+			throw new LocalizedException(__($this->getConfigData('user_facing_error_message')));
+		}
+	}
+
 	private function getTokenFromPublicHash($public_hash, $customer_id)
 	{
 		$paymentToken = $this->tokenManagement->getByPublicHash($public_hash, $customer_id);
@@ -271,11 +309,6 @@ class ClientTicket extends \Magento\Payment\Model\Method\Cc
 		} else {
 			return null;
 		}
-	}
-
-	public function isAvailable(\Magento\Quote\Api\Data\CartInterface $quote = NULL)
-	{
-		return $this->getConfigData('active') || $this->getConfigData('active');
 	}
 
 	private function vaultIsActive()

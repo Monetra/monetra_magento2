@@ -124,6 +124,10 @@ define(
 				}
 
 				this.appendTicketField('ticket_response_ticket', response.ticket);
+				this.appendTicketField('ticket_response_hmac', response.monetra_resp_hmacsha256);
+				this.appendTicketField('ticket_request_sequence', iframe_data.hmac_fields.sequence);
+				this.appendTicketField('ticket_request_timestamp', iframe_data.hmac_fields.timestamp);
+				this.appendTicketField('ticket_request_username', iframe_data.hmac_fields.username);
 
 				this.placeOrder();
 

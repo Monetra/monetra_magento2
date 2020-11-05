@@ -19,7 +19,7 @@
 			</monetra_client_ticket>
 			<monetra_account_vault>
 				<model>MonetraAccountVaultFacade</model>
-				<title>Stored Accounts (Monetra)</title>
+				<title>Monetra Account Vault</title>
 				<active>1</active>
 			</monetra_account_vault>
 		</payment>
