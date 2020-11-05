@@ -49,10 +49,14 @@ define(
 
 		paymentFrame.request();
 
-		iframeElement.contentWindow.postMessage(
-			JSON.stringify({ type: "getHeight" }),
-			paymentFormHost
-		);
+		$('input[name="payment[method]"]').change(function() {
+			if ($(this).val() === 'monetra_client_ticket') {
+				iframeElement.contentWindow.postMessage(
+					JSON.stringify({ type: "getHeight" }),
+					paymentFormHost
+				);
+			}
+		});
 
 		order.submit = function() {
 			if (order.paymentMethod === 'monetra_client_ticket') {

@@ -237,6 +237,11 @@ class ClientTicket extends \Magento\Payment\Model\Method\Cc
 		return $this->getConfigData('active') || $this->getConfigData('active');
 	}
 
+	public function vaultMethodTitle()
+	{
+		return $this->_scopeConfig->getValue('payment/' . self::VAULT_METHOD_CODE . '/title');
+	}
+
 	private function addTokenToVault($payment, $response)
 	{
 		$last_four = substr($response['account'], -4);
@@ -315,6 +320,5 @@ class ClientTicket extends \Magento\Payment\Model\Method\Cc
 	{
 		return $this->_scopeConfig->getValue('payment/' . self::VAULT_METHOD_CODE . '/active');
 	}
-
 
 }
