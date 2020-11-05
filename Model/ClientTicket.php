@@ -6,6 +6,7 @@ use \Magento\Framework\DataObject;
 use \Magento\Framework\Exception\LocalizedException;
 use \Magento\Vault\Model\PaymentToken;
 use \Magento\Vault\Model\PaymentTokenFactory;
+use \Magento\Vault\Model\Ui\VaultConfigProvider;
 use \Monetra\Monetra\Helper\MonetraException;
 use \Monetra\Monetra\Helper\MonetraInterface;
 
@@ -91,11 +92,11 @@ class ClientTicket extends \Magento\Payment\Model\Method\Cc
 
 		if ($this->vaultIsActive()) {
 
-			$tokenize_selected = $additional_data->getData('is_active_payment_token_enabler');
+			$tokenize_selected = $additional_data->getData(VaultConfigProvider::IS_ACTIVE_CODE);
 			if (empty($tokenize_selected)) {
 				$tokenize_selected = false;
 			}
-			$info_instance->setAdditionalInformation('tokenize', $tokenize_selected);
+			$info_instance->setAdditionalInformation(VaultConfigProvider::IS_ACTIVE_CODE, $tokenize_selected);
 
 			$token_public_hash = $additional_data->getData('public_hash');
 			if (!empty($token_public_hash)) {
@@ -106,7 +107,7 @@ class ClientTicket extends \Magento\Payment\Model\Method\Cc
 
 		} else {
 
-			$info_instance->setAdditionalInformation('tokenize', null);
+			$info_instance->setAdditionalInformation(VaultConfigProvider::IS_ACTIVE_CODE, null);
 			$info_instance->setAdditionalInformation('token_public_hash', null);
 			
 		}
@@ -117,7 +118,7 @@ class ClientTicket extends \Magento\Payment\Model\Method\Cc
 	public function authorize(\Magento\Payment\Model\InfoInterface $payment, $amount)
 	{
 		$ticket = $this->getInfoInstance()->getAdditionalInformation('ticket');
-		$tokenize = $this->getInfoInstance()->getAdditionalInformation('tokenize');
+		$tokenize = $this->getInfoInstance()->getAdditionalInformation(VaultConfigProvider::IS_ACTIVE_CODE);
 		$token_public_hash = $this->getInfoInstance()->getAdditionalInformation('token_public_hash');
 		try {
 			$order = $payment->getOrder();
@@ -160,7 +161,7 @@ class ClientTicket extends \Magento\Payment\Model\Method\Cc
 				$response = $this->monetraInterface->capture($ttid, $order);
 			} else {
 				$ticket = $this->getInfoInstance()->getAdditionalInformation('ticket');
-				$tokenize = $this->getInfoInstance()->getAdditionalInformation('tokenize');
+				$tokenize = $this->getInfoInstance()->getAdditionalInformation(VaultConfigProvider::IS_ACTIVE_CODE);
 				$token_public_hash = $this->getInfoInstance()->getAdditionalInformation('token_public_hash');
 
 				if (!empty($token_public_hash)) {
@@ -268,8 +269,6 @@ class ClientTicket extends \Magento\Payment\Model\Method\Cc
 			'expirationDate' => $formattedExpirationDate
 		]));
 		$paymentToken->setExpiresAt($expirationDate->add(\DateInterval::createFromDateString('+1 month')));
-		$paymentToken->setIsActive(true);
-		$paymentToken->setIsVisible(true);
 		
 		$extensionAttributes = $payment->getExtensionAttributes();
 		if ($extensionAttributes === null) {
