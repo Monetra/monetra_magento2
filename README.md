@@ -1,7 +1,6 @@
 # Monetra Module for Magento 2
 
-The Monetra Module for Magento 2 allows you to easily configure your Magento 2 instance to process payments through a
-Monetra server. The module utilizes the Monetra PaymentFrame feature, receiving payment information in an iframe provided by the Monetra server. This ensures that sensitive payment data is never entered into your website's front end or sent to your Magento server. It also provides the option for customers to save payment methods so they can use them in the future without re-entering card details (card data is not stored on your Magento server).
+The Monetra Module for Magento 2 allows you to easily configure your Magento 2 instance to process payments through a Monetra server. The module utilizes the Monetra PaymentFrame feature, receiving payment information in an iframe provided by the Monetra server. This ensures that sensitive payment data is never entered into your website's front end or sent to your Magento server. It also provides the option for customers to save payment methods so they can use them in the future without re-entering card details (sensitive card data is not stored on your Magento server).
 
 ## Installation
 
@@ -63,7 +62,7 @@ in the list of payment methods. Click on the arrow icon to expand the configurat
 
 ### Monetra Account Vault Configuration
 
-- **Enabled**: Must be set to "Yes" in order to allow customers to store cards for later use. If set to "No", customers will not have the option to save card data they enter or to use previously saved cards.
+- **Enabled**: Must be set to "Yes" in order to allow customers to store and reuse payment cards.
 
 - **Title**: The payment method name under which the customer's stored cards will appear. This only applies when creating orders in Magento's admin backend. In the customer-facing checkout process, stored cards will appear under a general "Payment Method" heading.
 
