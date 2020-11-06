@@ -12,9 +12,7 @@ bin/magento-cli setup:upgrade
 
 ## Configuration
 
-Once the Monetra Module is installed on your Magento instance, you will need to provide some configuration values for it
-in the Magento admin. Navigate to Stores => Configuration => Sales => Payment Methods. You should see "Monetra PaymentFrame" and "Monetra Account Vault"
-in the list of payment methods. Click on the arrow icon to expand the configuration option list.
+Once the Monetra Module is installed on your Magento instance, you will need to provide some configuration values for it in the Magento admin. Navigate to Stores => Configuration => Sales => Payment Methods. You should see "Monetra PaymentFrame" and "Monetra Account Vault" in the list of payment methods. Click on the arrow icon to expand the configuration option list.
 
 ### Monetra PaymentFrame Configuration
 
