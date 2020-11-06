@@ -1,7 +1,7 @@
 # Monetra Module for Magento 2
 
 The Monetra Module for Magento 2 allows you to easily configure your Magento 2 instance to process payments through a
-Monetra server. The module utilizes the Monetra PaymentFrame feature, receiving payment information in an iframe provided by the Monetra server. This ensures that sensitive payment data is never entered into your website's front end or sent to your Magento server.
+Monetra server. The module utilizes the Monetra PaymentFrame feature, receiving payment information in an iframe provided by the Monetra server. This ensures that sensitive payment data is never entered into your website's front end or sent to your Magento server. It also provides the option for customers to save payment methods so they can use them in the future without re-entering card details (card data is not stored on your Magento server).
 
 ## Installation
 
@@ -14,8 +14,10 @@ bin/magento-cli setup:upgrade
 ## Configuration
 
 Once the Monetra Module is installed on your Magento instance, you will need to provide some configuration values for it
-in the Magento admin. Navigate to Stores => Configuration => Sales => Payment Methods. You should see "Monetra PaymentFrame"
+in the Magento admin. Navigate to Stores => Configuration => Sales => Payment Methods. You should see "Monetra PaymentFrame" and "Monetra Account Vault"
 in the list of payment methods. Click on the arrow icon to expand the configuration option list.
+
+### Monetra PaymentFrame Configuration
 
 - **Enabled**: Must be set to "Yes" in order to use the Monetra PaymentFrame payment method.
 
@@ -59,6 +61,14 @@ in the list of payment methods. Click on the arrow icon to expand the configurat
 
 - **Sort Order**: Determines where this payment method will appear in relation to other payment methods on the checkout page. For example, if the sort order for this method is set to 1, and the sort order for another payment method is set to 2, this one will appear above the other one on the list of payment method options.
 
+### Monetra Account Vault Configuration
+
+- **Enabled**: Must be set to "Yes" in order to allow customers to store cards for later use. If set to "No", customers will not have the option to save card data they enter or to use previously saved cards.
+
+- **Title**: The payment method name under which the customer's stored cards will appear. This only applies when creating orders in Magento's admin backend. In the customer-facing checkout process, stored cards will appear under a general "Payment Method" heading.
+
 ## More Information
+
+Your Magento store **must** be configured to use HTTPS for the Monetra PaymentFrame payment method to work.
 
 For details on how the Monetra PaymentFrame feature works, please see the Monetra PaymentFrame Guide available at [https://www.monetra.com/developers](https://www.monetra.com/developers).
