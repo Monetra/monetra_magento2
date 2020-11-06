@@ -124,8 +124,8 @@ class ClientTicket extends \Magento\Payment\Model\Method\Cc
 			$order = $payment->getOrder();
 
 			if (!empty($token_public_hash)) {
-				$token = $this->getTokenFromPublicHash($token_public_hash, $order->getCustomerId());
-				$account_data = ['token' => $token];
+				$paymentToken = $this->getTokenFromPublicHash($token_public_hash, $order->getCustomerId());
+				$account_data = ['token' => $paymentToken->getGatewayToken()];
 			} else {
 				$account_data = ['cardshieldticket' => $ticket];
 			}
@@ -141,8 +141,11 @@ class ClientTicket extends \Magento\Payment\Model\Method\Cc
 				sprintf('Monetra authorization failed for TTID %d. Verbiage: %s', $response['ttid'], $response['verbiage'])
 			);
 			throw new LocalizedException(__($this->getConfigData('user_facing_deny_message')));
-		} elseif (isset($response['token'])) {
-			$this->addTokenToVault($payment, $response);
+		} else {
+			if (empty($paymentToken)) {
+				$paymentToken = null;
+			}
+			$this->handleAuthResponse($response, $payment, $paymentToken);
 		}
 
 		$payment->setTransactionId($response['ttid']);
@@ -165,8 +168,8 @@ class ClientTicket extends \Magento\Payment\Model\Method\Cc
 				$token_public_hash = $this->getInfoInstance()->getAdditionalInformation('token_public_hash');
 
 				if (!empty($token_public_hash)) {
-					$token = $this->getTokenFromPublicHash($token_public_hash, $order->getCustomerId());
-					$account_data = ['token' => $token];
+					$paymentToken = $this->getTokenFromPublicHash($token_public_hash, $order->getCustomerId());
+					$account_data = ['token' => $paymentToken->getGatewayToken()];
 				} else {
 					$account_data = ['cardshieldticket' => $ticket];
 				}
@@ -182,8 +185,11 @@ class ClientTicket extends \Magento\Payment\Model\Method\Cc
 				sprintf('Monetra capture failed for TTID %d. Verbiage: %s', $response['ttid'], $response['verbiage'])
 			);
 			throw new LocalizedException(__($this->getConfigData('user_facing_deny_message')));
-		} elseif (isset($response['token'])) {
-			$this->addTokenToVault($payment, $response);
+		} else {
+			if (empty($paymentToken)) {
+				$paymentToken = null;
+			}
+			$this->handleAuthResponse($response, $payment, $paymentToken);
 		}
 
 		$payment->setTransactionId($response['ttid']);
@@ -243,6 +249,35 @@ class ClientTicket extends \Magento\Payment\Model\Method\Cc
 		return $this->_scopeConfig->getValue('payment/' . self::VAULT_METHOD_CODE . '/title');
 	}
 
+	private function handleAuthResponse($response, $payment, $paymentToken = null)
+	{
+		if (isset($response['token'])) {
+			$this->addTokenToVault($payment, $response);
+		} elseif (!empty($paymentToken)) {
+			$this->applyTokenToPaymentRecord($paymentToken, $payment);
+		} elseif (isset($response['cardtype']) && isset($response['account'])) {
+			$cardtypeValue = self::$cardtypeMap[$response['cardtype']];
+			$accountValue = substr($response['account'], -4);
+			$payment->setCcType($cardtypeValue);
+			$payment->setCcLast4($accountValue);
+		}
+	}
+
+	private function applyTokenToPaymentRecord($paymentToken, $payment)
+	{
+		$extensionAttributes = $payment->getExtensionAttributes();
+		if ($extensionAttributes === null) {
+			$extensionAttributes = $this->extensionAttributesFactory->create($payment);
+			$payment->setExtensionAttributes($extensionAttributes);
+		}
+		$extensionAttributes->setVaultPaymentToken($paymentToken);
+		$jsonDetails = json_decode($paymentToken->getTokenDetails() ? : '{}', true);
+
+		$payment->setCcType($jsonDetails['type']);
+		$payment->setCcLast4($jsonDetails['maskedCC']);
+
+	}
+
 	private function addTokenToVault($payment, $response)
 	{
 		$last_four = substr($response['account'], -4);
@@ -270,15 +305,7 @@ class ClientTicket extends \Magento\Payment\Model\Method\Cc
 		]));
 		$paymentToken->setExpiresAt($expirationDate->add(\DateInterval::createFromDateString('+1 month')));
 		
-		$extensionAttributes = $payment->getExtensionAttributes();
-		if ($extensionAttributes === null) {
-			$extensionAttributes = $this->extensionAttributesFactory->create($payment);
-			$payment->setExtensionAttributes($extensionAttributes);
-		}
-
-		syslog(\LOG_INFO, "Should be adding the token...");
-
-		$extensionAttributes->setVaultPaymentToken($paymentToken);
+		$this->applyTokenToPaymentRecord($paymentToken, $payment);
 		
 	}
 
@@ -311,7 +338,7 @@ class ClientTicket extends \Magento\Payment\Model\Method\Cc
 	{
 		$paymentToken = $this->tokenManagement->getByPublicHash($public_hash, $customer_id);
 		if (!empty($paymentToken)) {
-			return $paymentToken->getGatewayToken();
+			return $paymentToken;//->getGatewayToken();
 		} else {
 			return null;
 		}
