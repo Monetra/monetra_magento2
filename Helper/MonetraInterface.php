@@ -39,6 +39,7 @@ class MonetraInterface extends \Magento\Framework\App\Helper\AbstractHelper
 		$address = $order->getBillingAddress();
 		$street = $address->getStreet1();
 		$zip = $address->getPostcode();
+		$tax_amount = $order->getBaseTaxAmount();
 
 		$account_data['cardholdername'] = $cardholdername;
 
@@ -49,7 +50,8 @@ class MonetraInterface extends \Magento\Framework\App\Helper\AbstractHelper
 				'zip' => strval($zip)
 			],
 			'money' => [
-				'amount' => strval($amount)
+				'amount' => strval($amount),
+				'tax' => strval($tax_amount)
 			]
 		];
 
@@ -76,6 +78,7 @@ class MonetraInterface extends \Magento\Framework\App\Helper\AbstractHelper
 		$address = $order->getBillingAddress();
 		$street = $address->getStreet1();
 		$zip = $address->getPostcode();
+		$tax_amount = $order->getBaseTaxAmount();
 
 		$account_data['cardholdername'] = $cardholdername;
 
@@ -86,7 +89,8 @@ class MonetraInterface extends \Magento\Framework\App\Helper\AbstractHelper
 				'zip' => strval($zip)
 			],
 			'money' => [
-				'amount' => strval($amount)
+				'amount' => strval($amount),
+				'tax' => strval($tax_amount)
 			],
 			'order' => [
 				'ordernum' => strval($order_num)
