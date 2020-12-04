@@ -27,7 +27,7 @@ class ClientTicketData extends \Magento\Framework\App\Helper\AbstractHelper
 			$password = $this->_encryptor->decrypt($this->getConfigValue('monetra_password'));
 		}
 
-		$req_sequence = random_int();
+		$req_sequence = random_int(1000000, 9999999);
 		$req_timestamp = time();
 
 		$hmac_fields = [
