@@ -137,9 +137,15 @@ class ClientTicket extends \Magento\Payment\Model\Method\Cc
 			throw new LocalizedException(__($this->getConfigData('user_facing_error_message')));
 		}
 		if ($response['code'] !== 'AUTH') {
-			$this->_logger->info(
-				sprintf('Monetra authorization failed for TTID %d. Verbiage: %s', $response['ttid'], $response['verbiage'])
-			);
+			if (isset($response['ttid'])) {
+				$this->_logger->info(
+					sprintf('Monetra authorization failed for TTID %d. Verbiage: %s', $response['ttid'], $response['verbiage'])
+				);
+			} else {
+				$this->_logger->info(
+					sprintf('Monetra authorization failed. Verbiage: %s', $response['verbiage'])
+				);
+			}
 			throw new LocalizedException(__($this->getConfigData('user_facing_deny_message')));
 		} else {
 			if (empty($paymentToken)) {
@@ -181,9 +187,15 @@ class ClientTicket extends \Magento\Payment\Model\Method\Cc
 			throw new LocalizedException(__($this->getConfigData('user_facing_error_message')));
 		}
 		if ($response['code'] !== 'AUTH') {
-			$this->_logger->info(
-				sprintf('Monetra capture failed for TTID %d. Verbiage: %s', $response['ttid'], $response['verbiage'])
-			);
+			if (isset($response['ttid'])) {
+				$this->_logger->info(
+					sprintf('Monetra capture failed for TTID %d. Verbiage: %s', $response['ttid'], $response['verbiage'])
+				);
+			} else {
+				$this->_logger->info(
+					sprintf('Monetra capture failed. Verbiage: %s', $response['verbiage'])
+				);
+			}
 			throw new LocalizedException(__($this->getConfigData('user_facing_deny_message')));
 		} else {
 			if (empty($paymentToken)) {
@@ -210,7 +222,7 @@ class ClientTicket extends \Magento\Payment\Model\Method\Cc
 
 		if ($response['code'] !== 'AUTH') {
 			$this->_logger->info(
-				sprintf('Monetra void failed for TTID %d. Verbiage: %s', $response['ttid'], $response['verbiage'])
+				sprintf('Monetra void failed for TTID %d. Verbiage: %s', $ttid, $response['verbiage'])
 			);
 			throw new LocalizedException(__('Void request failed. Details: ' . $response['verbiage']));
 		}
@@ -230,9 +242,15 @@ class ClientTicket extends \Magento\Payment\Model\Method\Cc
 		}
 
 		if ($response['code'] !== 'AUTH') {
-			$this->_logger->info(
-				sprintf('Monetra refund failed for TTID %d. Verbiage: %s', $response['ttid'], $response['verbiage'])
-			);
+			if (isset($response['ttid'])) {
+				$this->_logger->info(
+					sprintf('Monetra refund failed for TTID %d. Attempted refund TTID is %d. Verbiage: %s', $ttid, $response['ttid'], $response['verbiage'])
+				);
+			} else {
+				$this->_logger->info(
+					sprintf('Monetra refund failed for TTID %d. Verbiage: %s', $ttid, $response['verbiage'])
+				);
+			}
 			throw new LocalizedException(__('Refund request failed. Details: ' . $response['verbiage']));
 		}
 
