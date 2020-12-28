@@ -66,7 +66,7 @@ class MonetraInterface extends \Magento\Framework\App\Helper\AbstractHelper
 	{
 		$order_num = $order->getIncrementId();
 		$data = [
-			'order' => ['ordernum' => $order_num]
+			'order' => ['ordernum' => strval($order_num)]
 		];
 		return $this->request('PATCH', 'transaction/' . $ttid . '/complete', $data);
 	}
@@ -128,7 +128,7 @@ class MonetraInterface extends \Magento\Framework\App\Helper\AbstractHelper
 	{
 		$refund_data = [
 			'money' => [
-				'amount' => $amount
+				'amount' => strval($amount)
 			]
 		];
 
@@ -136,7 +136,7 @@ class MonetraInterface extends \Magento\Framework\App\Helper\AbstractHelper
 		 * depending on the circumstances. First check to see if the
 		 * transaction in question is still unsettled.
 		 */
-		$unsettled = $this->request('GET', 'report/unsettled', ['ttid' => $ttid]);
+		$unsettled = $this->request('GET', 'report/unsettled', ['ttid' => strval($ttid)]);
 
 		if (count($unsettled) > 0) {
 
@@ -152,7 +152,7 @@ class MonetraInterface extends \Magento\Framework\App\Helper\AbstractHelper
 				/* If return amount matches original amount, attempt reversal first.
 				 * If that doesn't work, use void.
 				 */
-				$reversal = $this->request('DELETE', 'transaction/' . $refund_data);
+				$reversal = $this->request('DELETE', 'transaction/' . $ttid);
 
 				if ($reversal['code'] === 'AUTH') {
 					return $reversal;

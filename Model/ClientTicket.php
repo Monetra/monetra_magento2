@@ -125,9 +125,9 @@ class ClientTicket extends \Magento\Payment\Model\Method\Cc
 
 			if (!empty($token_public_hash)) {
 				$paymentToken = $this->getTokenFromPublicHash($token_public_hash, $order->getCustomerId());
-				$account_data = ['token' => $paymentToken->getGatewayToken()];
+				$account_data = ['token' => strval($paymentToken->getGatewayToken())];
 			} else {
-				$account_data = ['cardshieldticket' => $ticket];
+				$account_data = ['cardshieldticket' => strval($ticket)];
 			}
 
 			$response = $this->monetraInterface->authorize($account_data, $amount, $order, $tokenize);
@@ -175,9 +175,9 @@ class ClientTicket extends \Magento\Payment\Model\Method\Cc
 
 				if (!empty($token_public_hash)) {
 					$paymentToken = $this->getTokenFromPublicHash($token_public_hash, $order->getCustomerId());
-					$account_data = ['token' => $paymentToken->getGatewayToken()];
+					$account_data = ['token' => strval($paymentToken->getGatewayToken())];
 				} else {
-					$account_data = ['cardshieldticket' => $ticket];
+					$account_data = ['cardshieldticket' => strval($ticket)];
 				}
 
 				$response = $this->monetraInterface->sale($account_data, $amount, $order, $tokenize);
