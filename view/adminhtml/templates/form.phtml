@@ -20,6 +20,18 @@
 		data-hmac-include-submit-button="no">
 	</iframe>
 	<div id="monetra_client_ticket_response_fields"></div>
+	<?php if ($block->isVaultEnabled()) : ?>
+		<div class="field-tooltip-content">
+			<input type="checkbox"
+				id="<?= $block->escapeHtmlAttr($code) ?>_vault"
+				name="payment[<?= $block->getVaultIsActiveCode() ?>]"
+				class="admin__control-checkbox"
+				value="1" />
+			<label class="label" for="<?= $block->escapeHtmlAttr($code) ?>_vault">
+				<span><?= $block->escapeHtml('Save for later use.') ?></span>
+			</label>
+		</div>
+	<?php endif; ?>
 </fieldset>
 <script>
 	require(["Monetra_Monetra/js/client-ticket"]);

@@ -32,6 +32,10 @@ define(
 			}
 
 			appendTicketField('ticket_response_ticket', response.ticket);
+			appendTicketField('ticket_response_hmac', response.monetra_resp_hmacsha256);
+			appendTicketField('ticket_request_sequence', iframeElement.dataset.hmacSequence);
+			appendTicketField('ticket_request_timestamp', iframeElement.dataset.hmacTimestamp);
+			appendTicketField('ticket_request_username', iframeElement.dataset.hmacUsername);
 
 			submit_order();
 		}
@@ -45,18 +49,24 @@ define(
 
 		paymentFrame.request();
 
-		iframeElement.contentWindow.postMessage(
-			JSON.stringify({ type: "getHeight" }),
-			paymentFormHost
-		);
+		$('input[name="payment[method]"]').change(function() {
+			if ($(this).val() === 'monetra_client_ticket') {
+				iframeElement.contentWindow.postMessage(
+					JSON.stringify({ type: "getHeight" }),
+					paymentFormHost
+				);
+			}
+		});
 
 		order.submit = function() {
-
-			iframeElement.contentWindow.postMessage(
-				JSON.stringify({ type: "submitPaymentData" }),
-				paymentFormHost
-			);
-
+			if (order.paymentMethod === 'monetra_client_ticket') {
+				iframeElement.contentWindow.postMessage(
+					JSON.stringify({ type: "submitPaymentData" }),
+					paymentFormHost
+				);
+			} else {
+				submit_order();
+			}
 		};
 	}
 );

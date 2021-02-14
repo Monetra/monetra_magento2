@@ -24,25 +24,57 @@
 					<source_model>Monetra\Monetra\Model\Source\PaymentServer</source_model>
 				</field>
 				<field id="monetra_host" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="0">
+					<depends>
+						<field id="payment_server">custom</field>
+					</depends>
 					<label>Monetra Host</label>
 				</field>
 				<field id="monetra_port" translate="label" type="text" sortOrder="35" showInDefault="1" showInWebsite="1" showInStore="0">
-					<label>Monetra Post Port</label>
+					<depends>
+						<field id="payment_server">custom</field>
+					</depends>
+					<label>Monetra Port</label>
 				</field>
-				<field id="monetra_username" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="0">
-					<label>Monetra Post Username</label>
+				<field id="separate_users" translate="label" type="select" sortOrder="36" showInDefault="1" showInWebsite="1" showInStore="0">
+					<label>Separate users for ticket request and payment (POST) request</label>
+					<source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
 				</field>
-				<field id="monetra_password" translate="label" type="obscure" sortOrder="45" showInDefault="1" showInWebsite="1" showInStore="0">
-					<label>Monetra Post Password</label>
+				<field id="monetra_username" translate="label" type="text" sortOrder="37" showInDefault="1" showInWebsite="1" showInStore="0">
+					<depends>
+						<field id="separate_users">0</field>
+					</depends>
+					<label>Monetra Username</label>
+				</field>
+				<field id="monetra_password" translate="label" type="obscure" sortOrder="38" showInDefault="1" showInWebsite="1" showInStore="0">
+					<depends>
+						<field id="separate_users">0</field>
+					</depends>
+					<label>Monetra Password</label>
 					<backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
 				</field>
-				<field id="monetra_ticket_port" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="0">
-					<label>Monetra Ticket Port</label>
+				<field id="monetra_post_username" translate="label" type="text" sortOrder="39" showInDefault="1" showInWebsite="1" showInStore="0">
+					<depends>
+						<field id="separate_users">1</field>
+					</depends>
+					<label>Monetra POST Username</label>
 				</field>
-				<field id="monetra_ticket_username" translate="label" type="text" sortOrder="55" showInDefault="1" showInWebsite="1" showInStore="0">
+				<field id="monetra_post_password" translate="label" type="obscure" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="0">
+					<depends>
+						<field id="separate_users">1</field>
+					</depends>
+					<label>Monetra POST Password</label>
+					<backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+				</field>
+				<field id="monetra_ticket_username" translate="label" type="text" sortOrder="45" showInDefault="1" showInWebsite="1" showInStore="0">
+					<depends>
+						<field id="separate_users">1</field>
+					</depends>
 					<label>Monetra Ticket Username</label>
 				</field>
-				<field id="monetra_ticket_password" translate="label" type="obscure" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="0">
+				<field id="monetra_ticket_password" translate="label" type="obscure" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="0">
+					<depends>
+						<field id="separate_users">1</field>
+					</depends>
 					<label>Monetra Ticket Password</label>
 					<backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
 				</field>
@@ -70,6 +102,16 @@
 				<field id="sort_order" translate="label" type="text" sortOrder="95" showInDefault="1" showInWebsite="1" showInStore="0">
 					<label>Sort Order</label>
 					<frontend_class>validate-number</frontend_class>
+				</field>
+			</group>
+			<group id="monetra_account_vault" translate="label" type="text" sortOrder="501" showInDefault="1" showInWebsite="1" showInStore="1">
+				<label>Monetra Account Vault</label>
+				<field id="active" translate="label" type="select" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="0">
+					<label>Enabled</label>
+					<source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+				</field>
+				<field id="title" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="0">
+					<label>Title</label>
 				</field>
 			</group>
 		</section>

@@ -2,6 +2,8 @@
 
 namespace Monetra\Monetra\Helper;
 
+use \Monetra\Monetra\Model\ClientTicket;
+
 class ClientTicketData extends \Magento\Framework\App\Helper\AbstractHelper
 {
 	private $_encryptor;
@@ -16,10 +18,16 @@ class ClientTicketData extends \Magento\Framework\App\Helper\AbstractHelper
 
 	public function generateTicketRequestData()
 	{
-		$username = $this->getConfigValue('monetra_ticket_username');
-		$password = $this->_encryptor->decrypt($this->getConfigValue('monetra_ticket_password'));
+		$separate_users = $this->getConfigValue('separate_users');
+		if ($separate_users) {
+			$username = $this->getConfigValue('monetra_ticket_username');
+			$password = $this->_encryptor->decrypt($this->getConfigValue('monetra_ticket_password'));
+		} else {
+			$username = $this->getConfigValue('monetra_username');
+			$password = $this->_encryptor->decrypt($this->getConfigValue('monetra_password'));
+		}
 
-		$req_sequence = mt_rand();
+		$req_sequence = random_int(1000000, 9999999);
 		$req_timestamp = time();
 
 		$hmac_fields = [
@@ -50,7 +58,7 @@ class ClientTicketData extends \Magento\Framework\App\Helper\AbstractHelper
 
 		$payment_server = $this->getConfigValue('payment_server');
 		if ($payment_server === 'custom') {
-			$payment_form_host = 'https://' . $this->getConfigValue('monetra_host') . ':' . $this->getConfigValue('monetra_ticket_port');
+			$payment_form_host = 'https://' . $this->getConfigValue('monetra_host') . ':' . $this->getConfigValue('monetra_port');
 		} elseif ($payment_server === 'live') {
 			$payment_form_host = 'https://' . MonetraInterface::LIVE_SERVER_URL . ':' . MonetraInterface::LIVE_SERVER_PORT;
 		} else {
@@ -59,13 +67,20 @@ class ClientTicketData extends \Magento\Framework\App\Helper\AbstractHelper
 
 		$data = [
 			'payment_form_host' => $payment_form_host,
-			'hmac_fields' => $hmac_fields
+			'hmac_fields' => $hmac_fields,
+			'vault_active' => $this->getVaultConfigValue('active')
 		];
+		
 		return $data;
 	}
 
 	private function getConfigValue($key)
 	{
-		return $this->scopeConfig->getValue('payment/monetra_client_ticket/' . $key, \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+		return $this->scopeConfig->getValue('payment/' . ClientTicket::METHOD_CODE . '/' . $key, \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+	}
+
+	public function getVaultConfigValue($key)
+	{
+		return $this->scopeConfig->getValue('payment/' . ClientTicket::VAULT_METHOD_CODE . '/' . $key, \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
 	}
 }

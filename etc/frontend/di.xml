@@ -3,15 +3,25 @@
 	<type name="Magento\Payment\Model\CcGenericConfigProvider">
 		<arguments>
 			<argument name="methodCodes" xsi:type="array">
-				<item name="ticket" xsi:type="const">Monetra\Monetra\Model\ClientTicket::METHOD_CODE</item>
+				<item name="monetra_client_ticket" xsi:type="const">Monetra\Monetra\Model\ClientTicket::METHOD_CODE</item>
 			</argument>
 		</arguments>
 	</type>
 	<type name="Magento\Checkout\Model\CompositeConfigProvider">
 		<arguments>
 			<argument name="configProviders" xsi:type="array">
-				<item name="monetra_cc_config_provider" xsi:type="object">Monetra\Monetra\Model\ConfigProvider</item>
+				<item name="monetra_client_ticket_config_provider" xsi:type="object">Monetra\Monetra\Model\ConfigProvider</item>
 			</argument>
 		</arguments>
+	</type>
+	<type name="Magento\Vault\Model\Ui\TokensConfigProvider">
+		<arguments>
+			<argument name="tokenUiComponentProviders" xsi:type="array">
+				<item name="monetra_client_ticket" xsi:type="object">Monetra\Monetra\Model\Ui\TokenUiComponentProvider</item>
+			</argument>
+		</arguments>
+	</type>
+	<type name="Magento\Vault\Api\PaymentTokenRepositoryInterface">
+		<plugin name="monetraDeleteStoredPaymentPlugin" type="\Monetra\Monetra\Plugin\DeleteStoredPaymentPlugin" />
 	</type>
 </config>

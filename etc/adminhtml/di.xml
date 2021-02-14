@@ -8,4 +8,11 @@
 			</argument>
 		</arguments>
 	</type>
+	<type name="Magento\Vault\Model\Ui\Adminhtml\TokensConfigProvider">
+		<arguments>
+			<argument name="tokenUiComponentProviders" xsi:type="array">
+				<item name="monetra_client_ticket" xsi:type="object">Monetra\Monetra\Model\Ui\Admin\TokenUiComponentProvider</item>
+			</argument>
+		</arguments>
+	</type>
 </config>
