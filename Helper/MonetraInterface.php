@@ -37,7 +37,7 @@ class MonetraInterface extends \Magento\Framework\App\Helper\AbstractHelper
 	{
 		$cardholdername = $order->getCustomerName();
 		$address = $order->getBillingAddress();
-		$street = $address->getStreet1();
+		$street = $address->getStreetLine(1);
 		$zip = $address->getPostcode();
 		$tax_amount = $order->getBaseTaxAmount();
 
@@ -62,12 +62,15 @@ class MonetraInterface extends \Magento\Framework\App\Helper\AbstractHelper
 		return $this->request('POST', 'transaction/preauth', $data);
 	}
 
-	public function capture($ttid, $order)
+	public function capture($ttid, $order, $amount = null)
 	{
 		$order_num = $order->getIncrementId();
 		$data = [
 			'order' => ['ordernum' => strval($order_num)]
 		];
+		if ($amount !== null) {
+			$data['money']['amount'] = strval($amount);
+		}
 		return $this->request('PATCH', 'transaction/' . $ttid . '/complete', $data);
 	}
 
@@ -76,7 +79,7 @@ class MonetraInterface extends \Magento\Framework\App\Helper\AbstractHelper
 		$order_num = $order->getIncrementId();
 		$cardholdername = $order->getCustomerName();
 		$address = $order->getBillingAddress();
-		$street = $address->getStreet1();
+		$street = $address->getStreetLine(1);
 		$zip = $address->getPostcode();
 		$tax_amount = $order->getBaseTaxAmount();
 

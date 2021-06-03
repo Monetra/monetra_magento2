@@ -165,15 +165,16 @@ class ClientTicket extends \Magento\Payment\Model\Method\Cc
 		$order = $payment->getOrder();
 		try {
 			$ttid = $payment->getParentTransactionId();
-
 			if (!empty($ttid)) {
-				$response = $this->monetraInterface->capture($ttid, $order);
+				$response = $this->monetraInterface->capture($ttid, $order, $amount);
 			} else {
 				$ticket = $this->getInfoInstance()->getAdditionalInformation('ticket');
 				$tokenize = $this->getInfoInstance()->getAdditionalInformation(VaultConfigProvider::IS_ACTIVE_CODE);
+				$token = $this->getInfoInstance()->getAdditionalInformation('token');
 				$token_public_hash = $this->getInfoInstance()->getAdditionalInformation('token_public_hash');
-
-				if (!empty($token_public_hash)) {
+				if (!empty($token)) {
+					$account_data = ['token' => strval($token)];
+				} elseif (!empty($token_public_hash)) {
 					$paymentToken = $this->getTokenFromPublicHash($token_public_hash, $order->getCustomerId());
 					$account_data = ['token' => strval($paymentToken->getGatewayToken())];
 				} else {
@@ -270,7 +271,8 @@ class ClientTicket extends \Magento\Payment\Model\Method\Cc
 	private function handleAuthResponse($response, $payment, $paymentToken = null)
 	{
 		if (isset($response['token'])) {
-			$this->addTokenToVault($payment, $response);
+			$paymentToken = $this->addTokenToVault($payment, $response);
+			$this->getInfoInstance()->setAdditionalInformation('token', $paymentToken->getGatewayToken());
 		} elseif (!empty($paymentToken)) {
 			$this->applyTokenToPaymentRecord($paymentToken, $payment);
 		} elseif (isset($response['cardtype']) && isset($response['account'])) {
@@ -279,6 +281,7 @@ class ClientTicket extends \Magento\Payment\Model\Method\Cc
 			$payment->setCcType($cardtypeValue);
 			$payment->setCcLast4($accountValue);
 		}
+		$this->getInfoInstance()->setAdditionalInformation('ticket', null);
 	}
 
 	private function applyTokenToPaymentRecord($paymentToken, $payment)
@@ -324,7 +327,8 @@ class ClientTicket extends \Magento\Payment\Model\Method\Cc
 		$paymentToken->setExpiresAt($expirationDate->add(\DateInterval::createFromDateString('+1 month')));
 		
 		$this->applyTokenToPaymentRecord($paymentToken, $payment);
-		
+
+		return $paymentToken;
 	}
 
 	private function validateResponseHmac($additional_data, $ticket)
@@ -356,7 +360,7 @@ class ClientTicket extends \Magento\Payment\Model\Method\Cc
 	{
 		$paymentToken = $this->tokenManagement->getByPublicHash($public_hash, $customer_id);
 		if (!empty($paymentToken)) {
-			return $paymentToken;//->getGatewayToken();
+			return $paymentToken;
 		} else {
 			return null;
 		}
