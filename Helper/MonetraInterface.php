@@ -141,12 +141,12 @@ class MonetraInterface extends \Magento\Framework\App\Helper\AbstractHelper
 		 */
 		$unsettled = $this->request('GET', 'report/unsettled', ['ttid' => strval($ttid)]);
 
-		if (count($unsettled) > 0) {
+		if (isset($unsettled['report']) && count($unsettled['report']) > 0) {
 
 			/* If transaction is unsettled, only use return if amount specified for return
 			 * is less than original transaction amount.
 			 */
-			if ($amount < $unsettled[0]['amount']) {
+			if ($amount < $unsettled['report'][0]['amount']) {
 
 				return $this->request('POST', 'transaction/' . $ttid . '/refund', $refund_data);
 
