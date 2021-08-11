@@ -35,6 +35,7 @@ class MonetraInterface extends \Magento\Framework\App\Helper\AbstractHelper
 
 	public function authorize($account_data, $amount, $order, $tokenize = false)
 	{
+		$order_num = $order->getIncrementId();
 		$cardholdername = $order->getCustomerName();
 		$address = $order->getBillingAddress();
 		$street = $address->getStreetLine(1);
@@ -52,6 +53,9 @@ class MonetraInterface extends \Magento\Framework\App\Helper\AbstractHelper
 			'money' => [
 				'amount' => strval($amount),
 				'tax' => strval($tax_amount)
+			],
+			'order' => [
+				'ordernum' => strval($order_num)
 			]
 		];
 
