@@ -1,7 +1,9 @@
 <?php 
 	$code = $block->escapeHtml($block->getMethodCode()); 
 ?>
-<fieldset class="admin__fieldset payment-method" id="payment_form_<?php echo $code; ?>" style="display:none">
+<fieldset data-mage-init='{
+		"Monetra_Monetra/js/client-ticket": {}
+	}' class="admin__fieldset payment-method" id="payment_form_<?php echo $code; ?>" style="display:none">
 	<iframe style="border:none;"
 		id="monetra-payment-iframe"
 		data-payment-form-host="<?php echo $block->getMonetraUrl() ?>"
@@ -33,6 +35,3 @@
 		</div>
 	<?php endif; ?>
 </fieldset>
-<script>
-	require(["Monetra_Monetra/js/client-ticket"]);
-</script>

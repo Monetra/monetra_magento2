@@ -40,14 +40,31 @@ define(
 			submit_order();
 		}
 
-		var paymentFrame = new PaymentFrame(
-			iframeElement.getAttribute('id'),
-			paymentFormHost
-		);
+		function requestPaymentFrame() {
 
-		paymentFrame.setPaymentSubmittedCallback(handlePaymentTicketResponse);
+			/* Retrieving this element again because the prior reference to it may be outdated */
+			iframeElement = document.getElementById("monetra-payment-iframe");
 
-		paymentFrame.request();
+			if (iframeElement.contentDocument === null
+			|| (iframeElement.contentDocument.readyState && iframeElement.contentDocument.readyState === 'loading')) {
+				return;
+			}
+
+			var paymentFrame = new PaymentFrame(
+				iframeElement.getAttribute('id'),
+				paymentFormHost
+			);
+
+			paymentFrame.setPaymentSubmittedCallback(handlePaymentTicketResponse);
+
+			paymentFrame.request();
+		}
+
+		requestPaymentFrame();
+
+		$('#order-billing_method').on('contentUpdated', function() {
+			requestPaymentFrame();
+		});
 
 		$('input[name="payment[method]"]').change(function() {
 			if ($(this).val() === 'monetra_client_ticket') {
