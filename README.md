@@ -28,21 +28,13 @@ Once the Monetra Module is installed on your Magento instance, you will need to 
 
 - **Monetra Host**: (*Only appears if the Payment Server option is set to Custom*) Hostname (FQDN) of the Monetra server that your Magento instance will be sending transactions to.
 
-- **Monetra Port**: (*Only appears if the Payment Server option is set to Custom*) Port number on the Monetra server that transactions will be sent to. Usually this will be 8665.
+- **Monetra Port**: (*Only appears if the Payment Server option is set to Custom*) Port number on the Monetra server that transactions will be sent to. Usually this will be 443 or 8665.
 
-- **Separate users for ticket request and payment (POST) request**: If you would like to use separate subusers for the ticket request (when the payment data is submitted to the payment server to generate a ticket) and the payment POST request (when the ticket and all other payment data is submitted to the payment server for processing), select Yes here. Otherwise, select No.
+- **Generate API Key**: This button allows you to generate an API key that can be used for Monetra authentication. See [Generating an API Key](#generating-api-key) for more information.
 
-- **Monetra Username**: (*Only appears if the Separate Users option is set to No*) The username of the Monetra user (for authentication on the Monetra server).
+- **Monetra API Key ID**: API key ID used to authenticate with Monetra. Can be entered manually or auto-generated using the "Generate API Key" configuration tool. See [Generating an API Key](#generating-api-key) for more information.
 
-- **Monetra Password**: (*Only appears if the Separate Users option is set to No*) The password of the Monetra user (for authentication on the Monetra server). Stored encrypted via `Magento\Config\Model\Config\Backend\Encrypted`
-
-- **Monetra Ticket Username**: (*Only appears if the Separate Users option is set to Yes*) The username of the Monetra user used for the ticket request.
-
-- **Monetra Ticket Password**: (*Only appears if the Separate Users option is set to Yes*) The password of the Monetra user used for the ticket request. Stored encrypted via `Magento\Config\Model\Config\Backend\Encrypted`
-
-- **Monetra POST Username**: (*Only appears if the Separate Users option is set to Yes*) The username of the Monetra user used for the payment (POST) request.
-
-- **Monetra POST Password**: (*Only appears if the Separate Users option is set to Yes*) The password of the Monetra user used for the payment (POST) request. Stored encrypted via `Magento\Config\Model\Config\Backend\Encrypted`
+- **Monetra API Key Secret**: API key secret used to authenticate with Monetra. Can be entered manually or auto-generated using the "Generate API Key" configuration tool. See [Generating an API Key](#generating-api-key) for more information. Stored encrypted via `Magento\Config\Model\Config\Backend\Encrypted`
 
 - **Expiration Date Format**: Format of the expiration date input on the payment form.
 
@@ -57,6 +49,16 @@ Once the Monetra Module is installed on your Magento instance, you will need to 
 - **User-Facing Payment Error Message**: The message that the user will see during the checkout process if an internal error within the module prevents the sale from successfully completing.
 
 - **Sort Order**: Determines where this payment method will appear in relation to other payment methods on the checkout page. For example, if the sort order for this method is set to 1, and the sort order for another payment method is set to 2, this one will appear above the other one on the list of payment method options.
+
+### Generating an API Key<a name="generating-api-key"></a>
+
+Starting with version 3.0.0, the Monetra module for Magento 2 uses Monetra API key authentication instead of username/password authentication. This provides several security benefits. API keys can be revoked in case an application is compromised, and they remove the need to store a username and password in your Magento configuration. This also means that Monetra password changes or resets will no longer require a configuration update in Magento.
+
+The easiest way to generate an API key to use with your Magento integration is to use the "Generate Key" button on the admin configuration page. This will open a popup window where you can enter your Monetra credentials (and select a profile, if necessary) to generate a key.
+
+Once your key has been generated, the popup window will close. **You must click the "Save Config" button to store the key in your Magento configuration.**
+
+**Note:** If your Magento instance already has a Monetra username and password configured, it will continue to work as it did previously. However, as of version 3.0.0 you will be unable to set a new username or password.
 
 ### Monetra Account Vault Configuration
 

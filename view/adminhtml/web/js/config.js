@@ -2,7 +2,7 @@ require(
 	[
 		"jquery",
 		"Magento_Ui/js/modal/modal",
-		'Magento_Ui/js/modal/alert'
+		"Magento_Ui/js/modal/alert"
 	],
 	function($, modal, alert) {
 
@@ -36,17 +36,14 @@ require(
 			}
 		});
 
-		modal(
-			{
-				title: 'Generate API Key',
-				buttons: [{
-					text: 'Submit',
-					click: submit_api_key_request
-				}],
-				clickableOverlay: true
-			}, 
-			generate_api_key_modal
-		);
+		generate_api_key_modal.modal({
+			title: 'Generate API Key',
+			buttons: [{
+				text: 'Submit',
+				click: submit_api_key_request
+			}],
+			clickableOverlay: true
+		});
 
 		generate_api_key_button.on('click', function() {
 			generate_api_key_modal.modal('openModal');
@@ -57,7 +54,7 @@ require(
 
 		$('body').on('submit', '#generate-api-key-form', function(e) {
 			e.preventDefault();
-			submit_api_key_request()
+			submit_api_key_request();
 		});
 
 		payment_server_dropdown.change();
@@ -75,6 +72,7 @@ require(
 				type: 'POST',
 				url: generate_api_key_form_content.data('url'),
 				data: data, 
+				showLoader: true,
 				success: function(response) {
 
 					if (response.success === 1) {

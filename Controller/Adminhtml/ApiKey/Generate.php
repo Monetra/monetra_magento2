@@ -5,12 +5,15 @@ namespace Monetra\Monetra\Controller\Adminhtml\ApiKey;
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\Controller\Result\JsonFactory;
+use Magento\Framework\App\Config\Storage\WriterInterface;
 use Monetra\Monetra\Helper\MonetraInterface;
+use Monetra\Monetra\Model\ClientTicket;
 
 class Generate extends Action
 {
 	private $resultJsonFactory;
 	private $monetraInterface;
+	private $configWriter;
 
 	private static $apikey_admin_perms = [
 		'TOKEN_ADD',
@@ -33,11 +36,13 @@ class Generate extends Action
 	public function __construct(
 		Context $context,
 		JsonFactory $resultJsonFactory,
-		MonetraInterface $monetraInterface
+		MonetraInterface $monetraInterface,
+		WriterInterface $configWriter
 	) {
 		parent::__construct($context);
 		$this->resultJsonFactory = $resultJsonFactory;
 		$this->monetraInterface = $monetraInterface;
+		$this->configWriter = $configWriter;
 	}
 
 	public function execute()
@@ -183,10 +188,23 @@ class Generate extends Action
 				]);
 		}
 
+		$this->deleteLegacyCredentials();
+
 		return $result->setData([
 			'success' => 1, 
 			'data' => $apikey_data
 		]);
 
+	}
+
+	private function deleteLegacyCredentials()
+	{
+		$this->configWriter->delete('payment/' . ClientTicket::METHOD_CODE . '/monetra_username');
+		$this->configWriter->delete('payment/' . ClientTicket::METHOD_CODE . '/monetra_ticket_username');
+		$this->configWriter->delete('payment/' . ClientTicket::METHOD_CODE . '/monetra_post_username');
+
+		$this->configWriter->delete('payment/' . ClientTicket::METHOD_CODE . '/monetra_password');
+		$this->configWriter->delete('payment/' . ClientTicket::METHOD_CODE . '/monetra_ticket_password');
+		$this->configWriter->delete('payment/' . ClientTicket::METHOD_CODE . '/monetra_post_password');
 	}
 }

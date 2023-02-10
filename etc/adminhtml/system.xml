@@ -35,16 +35,16 @@
 					</depends>
 					<label>Monetra Port</label>
 				</field>
+				<field id="monetra_apikey_generate" translate="label" type="button" sortorder="36" showInDefault="1" showInWebsite="1" showInStore="0">
+					<frontend_model>Monetra\Monetra\Block\GenerateApiKeyButton</frontend_model>
+					<label>Generate API Key</label>
+				</field>
 				<field id="monetra_apikey_id" translate="label" type="text" sortOrder="37" showInDefault="1" showInWebsite="1" showInStore="0">
 					<label>Monetra API Key ID</label>
 				</field>
-				<field id="monetra_apikey_secret" translate="label" type="obscure" sortOrder="37" showInDefault="1" showInWebsite="1" showInStore="0">
+				<field id="monetra_apikey_secret" translate="label" type="obscure" sortOrder="38" showInDefault="1" showInWebsite="1" showInStore="0">
 					<label>Monetra API Key Secret</label>
 					<backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
-				</field>
-				<field id="monetra_apikey_generate" translate="label" type="button" sortorder="37" showInDefault="1" showInWebsite="1" showInStore="0">
-					<frontend_model>Monetra\Monetra\Block\GenerateApiKeyButton</frontend_model>
-					<label>Generate API Key</label>
 				</field>
 				<field id="expdate_format" translate="label" type="select" sortOrder="65" showInDefault="1" showInWebsite="1" showInStore="0">
 					<label>Expiration Date Format</label>
