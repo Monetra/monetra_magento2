@@ -32,10 +32,9 @@ define(
 			}
 
 			appendTicketField('ticket_response_ticket', response.ticket);
-			appendTicketField('ticket_response_hmac', response.monetra_resp_hmacsha256);
 			appendTicketField('ticket_request_sequence', iframeElement.dataset.hmacSequence);
 			appendTicketField('ticket_request_timestamp', iframeElement.dataset.hmacTimestamp);
-			appendTicketField('ticket_request_username', iframeElement.dataset.hmacUsername);
+			appendTicketField('ticket_request_apikey_id', iframeElement.dataset.hmacAuthApiKeyId);
 
 			submit_order();
 		}

@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<csp_whitelist xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Csp:etc/csp_whitelist.xsd">
+	<policies>
+		<policy id="script-src">
+			<values>
+				<value id="test-transafe-script-src" type="host">https://test.transafe.com</value>
+				<value id="transafe-script-src" type="host">https://post.live.transafe.com</value>
+			</values>
+		</policy>
+		<policy id="form-action">
+			<values>
+				<value id="test-transafe-form-action" type="host">https://test.transafe.com</value>
+				<value id="transafe-form-action" type="host">https://post.live.transafe.com</value>
+			</values>
+		</policy>
+		<policy id="frame-src">
+			<values>
+				<value id="test-transafe-frame-src" type="host">https://test.transafe.com</value>
+				<value id="transafe-frame-src" type="host">https://post.live.transafe.com</value>
+			</values>
+		</policy>
+	</policies>
+</csp_whitelist>

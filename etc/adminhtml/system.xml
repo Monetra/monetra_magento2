@@ -35,48 +35,16 @@
 					</depends>
 					<label>Monetra Port</label>
 				</field>
-				<field id="separate_users" translate="label" type="select" sortOrder="36" showInDefault="1" showInWebsite="1" showInStore="0">
-					<label>Separate users for ticket request and payment (POST) request</label>
-					<source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+				<field id="monetra_apikey_id" translate="label" type="text" sortOrder="37" showInDefault="1" showInWebsite="1" showInStore="0">
+					<label>Monetra API Key ID</label>
 				</field>
-				<field id="monetra_username" translate="label" type="text" sortOrder="37" showInDefault="1" showInWebsite="1" showInStore="0">
-					<depends>
-						<field id="separate_users">0</field>
-					</depends>
-					<label>Monetra Username</label>
-				</field>
-				<field id="monetra_password" translate="label" type="obscure" sortOrder="38" showInDefault="1" showInWebsite="1" showInStore="0">
-					<depends>
-						<field id="separate_users">0</field>
-					</depends>
-					<label>Monetra Password</label>
+				<field id="monetra_apikey_secret" translate="label" type="obscure" sortOrder="37" showInDefault="1" showInWebsite="1" showInStore="0">
+					<label>Monetra API Key Secret</label>
 					<backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
 				</field>
-				<field id="monetra_post_username" translate="label" type="text" sortOrder="39" showInDefault="1" showInWebsite="1" showInStore="0">
-					<depends>
-						<field id="separate_users">1</field>
-					</depends>
-					<label>Monetra POST Username</label>
-				</field>
-				<field id="monetra_post_password" translate="label" type="obscure" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="0">
-					<depends>
-						<field id="separate_users">1</field>
-					</depends>
-					<label>Monetra POST Password</label>
-					<backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
-				</field>
-				<field id="monetra_ticket_username" translate="label" type="text" sortOrder="45" showInDefault="1" showInWebsite="1" showInStore="0">
-					<depends>
-						<field id="separate_users">1</field>
-					</depends>
-					<label>Monetra Ticket Username</label>
-				</field>
-				<field id="monetra_ticket_password" translate="label" type="obscure" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="0">
-					<depends>
-						<field id="separate_users">1</field>
-					</depends>
-					<label>Monetra Ticket Password</label>
-					<backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+				<field id="monetra_apikey_generate" translate="label" type="button" sortorder="37" showInDefault="1" showInWebsite="1" showInStore="0">
+					<frontend_model>Monetra\Monetra\Block\GenerateApiKeyButton</frontend_model>
+					<label>Generate API Key</label>
 				</field>
 				<field id="expdate_format" translate="label" type="select" sortOrder="65" showInDefault="1" showInWebsite="1" showInStore="0">
 					<label>Expiration Date Format</label>

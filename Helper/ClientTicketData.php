@@ -18,13 +18,23 @@ class ClientTicketData extends \Magento\Framework\App\Helper\AbstractHelper
 
 	public function generateTicketRequestData()
 	{
-		$separate_users = $this->getConfigValue('separate_users');
-		if ($separate_users) {
-			$username = $this->getConfigValue('monetra_ticket_username');
-			$password = $this->_encryptor->decrypt($this->getConfigValue('monetra_ticket_password'));
+		$apikey_id = $this->getConfigValue('monetra_apikey_id');
+		$encrypted_apikey_secret = $this->getConfigValue('monetra_apikey_secret');
+
+		if (empty($apikey_id) || empty($encrypted_apikey_secret)) {
+			$separate_users = $this->getConfigValue('separate_users');
+			if ($separate_users) {
+				$username = $this->getConfigValue('monetra_ticket_username');
+				$encrypted_password = $this->getConfigValue('monetra_ticket_password');
+			} else {
+				$username = $this->getConfigValue('monetra_username');
+				$encrypted_password = $this->getConfigValue('monetra_password');
+			}
+			$using_apikey = false;
+			$hmac_key = $this->_encryptor->decrypt($encrypted_password);
 		} else {
-			$username = $this->getConfigValue('monetra_username');
-			$password = $this->_encryptor->decrypt($this->getConfigValue('monetra_password'));
+			$using_apikey = true;
+			$hmac_key = $this->_encryptor->decrypt($encrypted_apikey_secret);
 		}
 
 		$req_sequence = random_int(1000000, 9999999);
@@ -33,9 +43,15 @@ class ClientTicketData extends \Magento\Framework\App\Helper\AbstractHelper
 		$hmac_fields = [
 			'timestamp' => $req_timestamp,
 			'domain' => 'https://' . $_SERVER['HTTP_HOST'],
-			'sequence' => $req_sequence,
-			'username' => $username,
+			'sequence' => $req_sequence
 		];
+
+		if ($using_apikey) {
+			$hmac_fields['auth_apikey_id'] = $apikey_id;
+		} else {
+			$hmac_fields['username'] = $username;
+		}
+
 		$css_url = $this->getConfigValue('css_url');
 		if (!empty($css_url)) {
 			$hmac_fields['css-url'] = $css_url;
@@ -52,7 +68,7 @@ class ClientTicketData extends \Magento\Framework\App\Helper\AbstractHelper
 
 		$data_to_hash = implode("", $hmac_fields);
 
-		$hmac = hash_hmac('sha256', $data_to_hash, $password);
+		$hmac = hash_hmac('sha256', $data_to_hash, $hmac_key);
 
 		$hmac_fields = array_merge(['hmacsha256' => $hmac], $hmac_fields);
 

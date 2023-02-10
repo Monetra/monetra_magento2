@@ -1,0 +1,53 @@
+<?php echo $block->getButtonHtml() ?>
+<div id="generate-api-key-modal">
+	<div class="modal-body-content" data-role="content">
+		<p>
+			Please enter your TranSafe/Monetra username and password below.
+			<br />
+			You will be prompted to enter your multi-factor authentication code if necessary.
+			<br />
+			If your account does not have a default profile set, you will be prompted to select a profile.
+			<br />
+			Once your API key has been generated, this popup window will close. 
+			You can then click "Save Config" to save your API key.
+		</p>
+		<div id="generate-api-key-form-content" data-url="<?php echo $block->getAjaxUrl() ?>">
+			<div>
+				<label>TranSafe/Monetra Username
+					<br />
+					<input id="monetra-username-input" type="text" />
+				</label>
+			</div>
+			<br />
+			<div>
+				<label>TranSafe/Monetra Password
+					<br />
+					<input id="monetra-password-input" type="password" />
+				</label>
+			</div>
+			<div id="monetra-mfa-code-input-container" style="display:none">
+				<br />
+				<p>
+					<b style="color:green">Please enter your multi-factor authentication code.</b>
+				</p>
+				<label>MFA Code
+					<br />
+					<input id="monetra-mfa-code-input" type="text" disabled />
+				</label>
+			</div>
+			<div id="monetra-profile-select-container" style="display:none">
+				<br />
+				<p>
+					<b style="color:green">Please select a profile.</b>
+				</p>
+				<label>Profile
+					<br />
+					<select id="monetra-profile-select" disabled>
+						<option value="">- Select a profile</option>
+					</select>
+				</label>
+			</div>
+			<button type="submit" style="display:none">Submit</button>
+		</div>
+	</div>
+</div>

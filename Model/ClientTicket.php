@@ -86,7 +86,6 @@ class ClientTicket extends \Magento\Payment\Model\Method\Cc
 		$ticket = $additional_data->getData('ticket_response_ticket');
 
 		if (!empty($ticket)) {
-			$this->validateResponseHmac($additional_data, $ticket);
 			$info_instance->setAdditionalInformation('ticket', $ticket);
 		}
 
@@ -329,31 +328,6 @@ class ClientTicket extends \Magento\Payment\Model\Method\Cc
 		$this->applyTokenToPaymentRecord($paymentToken, $payment);
 
 		return $paymentToken;
-	}
-
-	private function validateResponseHmac($additional_data, $ticket)
-	{
-		$separate_users = $this->getConfigData('separate_users');
-		if ($separate_users) {
-			$password = $this->encryptor->decrypt($this->getConfigData('monetra_ticket_password'));
-		} else {
-			$password = $this->encryptor->decrypt($this->getConfigData('monetra_password'));
-		}
-
-		$username = $additional_data->getData('ticket_request_username');
-		$sequence = $additional_data->getData('ticket_request_sequence');
-		$timestamp = $additional_data->getData('ticket_request_timestamp');
-
-		$response_hmac = $additional_data->getData('ticket_response_hmac');
-
-		$data_to_hash = $username . $sequence . $timestamp . $ticket;
-
-		$hmac_to_compare = hash_hmac('sha256', $data_to_hash, $password);
-
-		if (strtolower($response_hmac) !== strtolower($hmac_to_compare)) {
-			$this->_logger->critical("Unable to validate ticket response HMAC");
-			throw new LocalizedException(__($this->getConfigData('user_facing_error_message')));
-		}
 	}
 
 	private function getTokenFromPublicHash($public_hash, $customer_id)
