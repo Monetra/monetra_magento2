@@ -230,10 +230,6 @@ class MonetraInterface extends \Magento\Framework\App\Helper\AbstractHelper
 			curl_setopt($curl, \CURLOPT_POSTFIELDS, $request_body);
 		}
 
-		curl_setopt($curl, \CURLOPT_SSL_VERIFYHOST, false);
-		curl_setopt($curl, \CURLOPT_SSL_VERIFYPEER, false);
-		curl_setopt($curl, \CURLOPT_SSL_VERIFYSTATUS, false);
-
 		$response = curl_exec($curl);
 
 		$curl_error_code = curl_errno($curl);
