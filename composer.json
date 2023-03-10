@@ -2,7 +2,7 @@
 	"name": "monetra/monetra_magento2",
 	"type": "magento2-module",
 	"description": "A Magento 2 module for processing payments through a Monetra server",
-	"version": "2.2.9",
+	"version": "2.2.10",
 	"license": "MIT",
 	"keywords": [
 		"monetra",
