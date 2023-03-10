@@ -1,8 +1,8 @@
 <?php
 
 namespace Monetra\Monetra\Helper;
-use \Monetra\Monetra\Helper\MonetraException;
-use \Monetra\Monetra\Model\ClientTicket;
+use Monetra\Monetra\Helper\MonetraException;
+use Monetra\Monetra\Model\ClientTicket;
 
 class MonetraInterface extends \Magento\Framework\App\Helper\AbstractHelper
 {
@@ -235,10 +235,10 @@ class MonetraInterface extends \Magento\Framework\App\Helper\AbstractHelper
 		$curl_error_code = curl_errno($curl);
 
 		if ($curl_error_code !== 0) {
-			$this->_logger->info(
+			$this->logger->info(
 				'cURL error message from attempted Monetra request to ' . $url . ': ' . curl_error($curl)
 			);
-			$this->_logger->info(
+			$this->logger->info(
 				'cURL error code from attempted Monetra request to ' . $url . ': ' . $curl_error_code
 			);
 		}

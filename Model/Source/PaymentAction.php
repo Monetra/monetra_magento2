@@ -2,7 +2,7 @@
 
 namespace Monetra\Monetra\Model\Source;
 
-class PaymentAction implements \Magento\Framework\Option\ArrayInterface
+class PaymentAction implements \Magento\Framework\Data\OptionSourceInterface
 {
 
 	public function toOptionArray()

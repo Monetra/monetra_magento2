@@ -6,9 +6,7 @@ require(
 	],
 	function($, modal, alert) {
 
-		var payment_server_dropdown = $('#payment_us_monetra_client_ticket_payment_server');
-		var host_field_container = $('#row_payment_us_monetra_client_ticket_monetra_host');
-		var port_field_container = $('#row_payment_us_monetra_client_ticket_monetra_port');
+		alert('trying to do the modal thing');
 
 		var apikey_id_field = $('input[id$="monetra_apikey_id"]');
 		var apikey_secret_field = $('input[id$="monetra_apikey_secret"]');
@@ -25,16 +23,6 @@ require(
 
 		var mfa_code_input_container = $('#monetra-mfa-code-input-container');
 		var mfa_code_input = $('#monetra-mfa-code-input');
-
-		payment_server_dropdown.change(function() {
-			if (payment_server_dropdown.val() === 'custom') {
-				host_field_container.show();
-				port_field_container.show();
-			} else {
-				host_field_container.hide();
-				port_field_container.hide();
-			}
-		});
 
 		generate_api_key_modal.modal({
 			title: 'Generate API Key',
@@ -56,8 +44,6 @@ require(
 			e.preventDefault();
 			submit_api_key_request();
 		});
-
-		payment_server_dropdown.change();
 
 		function submit_api_key_request() {
 

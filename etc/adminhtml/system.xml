@@ -35,7 +35,7 @@
 					</depends>
 					<label>Monetra Port</label>
 				</field>
-				<field id="monetra_apikey_generate" translate="label" type="button" sortorder="36" showInDefault="1" showInWebsite="1" showInStore="0">
+				<field id="monetra_apikey_generate" translate="label" type="button" sortOrder="36" showInDefault="1" showInWebsite="1" showInStore="0">
 					<frontend_model>Monetra\Monetra\Block\GenerateApiKeyButton</frontend_model>
 					<label>Generate API Key</label>
 				</field>

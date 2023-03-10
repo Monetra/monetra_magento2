@@ -2,13 +2,13 @@
 
 namespace Monetra\Monetra\Model;
 
-use \Magento\Framework\DataObject;
-use \Magento\Framework\Exception\LocalizedException;
-use \Magento\Vault\Model\PaymentToken;
-use \Magento\Vault\Model\PaymentTokenFactory;
-use \Magento\Vault\Model\Ui\VaultConfigProvider;
-use \Monetra\Monetra\Helper\MonetraException;
-use \Monetra\Monetra\Helper\MonetraInterface;
+use Magento\Framework\DataObject;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Vault\Model\PaymentToken;
+use Magento\Vault\Model\PaymentTokenFactory;
+use Magento\Vault\Model\Ui\VaultConfigProvider;
+use Monetra\Monetra\Helper\MonetraException;
+use Monetra\Monetra\Helper\MonetraInterface;
 
 class ClientTicket extends \Magento\Payment\Model\Method\Cc
 {
@@ -27,6 +27,10 @@ class ClientTicket extends \Magento\Payment\Model\Method\Cc
 	protected $_canSaveCc = true;
 
 	private $paymentTokenFactory;
+	private $monetraInterface;
+	private $encryptor;
+	private $tokenManagement;
+
 	private static $cardtypeMap = [
 		'MC' => 'MC',
 		'VISA' => 'VI',
@@ -41,16 +45,16 @@ class ClientTicket extends \Magento\Payment\Model\Method\Cc
 		\Magento\Framework\Api\ExtensionAttributesFactory $extensionFactory,
 		\Magento\Framework\Api\AttributeValueFactory $customAttributeFactory,
 		\Magento\Payment\Helper\Data $paymentData,
-		\Magento\Vault\Model\PaymentTokenFactory $paymentTokenFactory,
-		\Magento\Vault\Api\PaymentTokenManagementInterface $tokenManagement,
 		\Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
 		\Magento\Payment\Model\Method\Logger $logger,
 		\Magento\Framework\Module\ModuleListInterface $moduleList,
 		\Magento\Framework\Stdlib\DateTime\TimezoneInterface $localeDate,
+		\Magento\Vault\Model\PaymentTokenFactory $paymentTokenFactory,
+		\Magento\Vault\Api\PaymentTokenManagementInterface $tokenManagement,
+		\Magento\Framework\Encryption\EncryptorInterface $encryptor,
+		MonetraInterface $monetraInterface,
 		\Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
 		\Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
-		\Magento\Framework\Encryption\EncryptorInterface $encryptor,
-		\Monetra\Monetra\Helper\MonetraInterface $monetraInterface,
 		array $data = []
 	) {
 		parent::__construct(
