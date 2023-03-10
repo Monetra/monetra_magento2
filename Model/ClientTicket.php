@@ -27,6 +27,10 @@ class ClientTicket extends \Magento\Payment\Model\Method\Cc
 	protected $_canSaveCc = true;
 
 	private $paymentTokenFactory;
+	private $tokenManagement;
+	private $monetraInterface;
+	private $encryptor;
+
 	private static $cardtypeMap = [
 		'MC' => 'MC',
 		'VISA' => 'VI',
@@ -47,10 +51,10 @@ class ClientTicket extends \Magento\Payment\Model\Method\Cc
 		\Magento\Payment\Model\Method\Logger $logger,
 		\Magento\Framework\Module\ModuleListInterface $moduleList,
 		\Magento\Framework\Stdlib\DateTime\TimezoneInterface $localeDate,
-		\Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
-		\Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
 		\Magento\Framework\Encryption\EncryptorInterface $encryptor,
 		\Monetra\Monetra\Helper\MonetraInterface $monetraInterface,
+		\Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
+		\Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
 		array $data = []
 	) {
 		parent::__construct(
@@ -260,6 +264,7 @@ class ClientTicket extends \Magento\Payment\Model\Method\Cc
 
 	public function isAvailable(\Magento\Quote\Api\Data\CartInterface $quote = NULL)
 	{
+		return 1;
 		return $this->getConfigData('active') || $this->getConfigData('active');
 	}
 
