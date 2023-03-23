@@ -264,7 +264,6 @@ class ClientTicket extends \Magento\Payment\Model\Method\Cc
 
 	public function isAvailable(\Magento\Quote\Api\Data\CartInterface $quote = NULL)
 	{
-		return 1;
 		return $this->getConfigData('active') || $this->getConfigData('active');
 	}
 
