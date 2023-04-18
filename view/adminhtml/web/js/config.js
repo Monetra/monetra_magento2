@@ -6,8 +6,6 @@ require(
 	],
 	function($, modal, alert) {
 
-		alert('trying to do the modal thing');
-
 		var apikey_id_field = $('input[id$="monetra_apikey_id"]');
 		var apikey_secret_field = $('input[id$="monetra_apikey_secret"]');
 
@@ -24,14 +22,16 @@ require(
 		var mfa_code_input_container = $('#monetra-mfa-code-input-container');
 		var mfa_code_input = $('#monetra-mfa-code-input');
 
-		generate_api_key_modal.modal({
+		var modal_options = {
 			title: 'Generate API Key',
 			buttons: [{
 				text: 'Submit',
 				click: submit_api_key_request
 			}],
 			clickableOverlay: true
-		});
+		}
+
+		var popup = modal(modal_options, generate_api_key_modal);
 
 		generate_api_key_button.on('click', function() {
 			generate_api_key_modal.modal('openModal');
