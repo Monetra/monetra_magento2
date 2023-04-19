@@ -29,9 +29,20 @@ class Form extends \Magento\Payment\Block\Form\Cc
 		return $this->ticketRequestData->payment_form_host;
 	}
 
+	public function usingApiKey()
+	{
+		$hmac_fields = $this->ticketRequestData->hmac_fields;
+		return array_key_exists('auth_apikey_id', $hmac_fields);
+	}
+
 	public function getMonetraUsername()
 	{
 		return $this->ticketRequestData->hmac_fields['username'];
+	}
+
+	public function getMonetraApiKeyId()
+	{
+		return $this->ticketRequestData->hmac_fields['auth_apikey_id'];
 	}
 
 	public function getMonetraAction()

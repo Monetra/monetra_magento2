@@ -11,7 +11,14 @@
 		data-hmac-timestamp="<?php echo $block->getMonetraTimestamp() ?>"
 		data-hmac-domain="<?php echo $block->getHostDomain() ?>"
 		data-hmac-sequence="<?php echo $block->getMonetraSequence() ?>"
-		data-hmac-username="<?php echo $block->getMonetraUsername() ?>"
+		<?php if ($block->usingApiKey()) {
+			$auth_field_name = "auth_apikey_id";
+			$auth_field_value = $block->getMonetraApiKeyId();
+		} else {
+			$auth_field_name = "username";
+			$auth_field_value = $block->getMonetraUsername();
+		} ?>
+		data-hmac-<?php echo $auth_field_name ?>="<?php echo $auth_field_value ?>"
 		data-hmac-css-url="<?php echo $block->getCssUrl() ?>"
 		data-hmac-include-cardholdername="no"
 		data-hmac-include-street="no"
