@@ -14,6 +14,7 @@ class ClientTicket extends \Magento\Payment\Model\Method\Cc
 {
 	const METHOD_CODE = 'monetra_client_ticket';
 	const VAULT_METHOD_CODE = 'monetra_account_vault';
+	const PREAUTH_MAX_AGE_DEFAULT = 2;
 
 	public $_code = self::METHOD_CODE;
 
@@ -199,6 +200,9 @@ class ClientTicket extends \Magento\Payment\Model\Method\Cc
 
 				$preauth_age_in_hours = $now->diff($order_created_at, true)->h;
 				$preauth_max_age_in_days = $this->getConfigData('preauth_max_age');
+				if (preg_match("/\d+/", $preauth_max_age_in_days) !== 1) {
+					$preauth_max_age_in_days = self::PREAUTH_MAX_AGE_DEFAULT;
+				}
 
 				if ($preauth_age_in_hours > $preauth_max_age_in_days * 24) {
 
