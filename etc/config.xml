@@ -9,6 +9,8 @@
 				<can_capture_vault>1</can_capture_vault>
 				<order_status>processing</order_status>
 				<payment_action>authorize</payment_action>
+				<preauth_max_age>2</preauth_max_age>
+				<auto_tokenize_preauth>0</auto_tokenize_preauth>
 				<title>Credit Card (Monetra PaymentFrame)</title>
 				<expdate_format>single-text</expdate_format>
 				<auto_reload>1</auto_reload>

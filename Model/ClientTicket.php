@@ -121,8 +121,17 @@ class ClientTicket extends \Magento\Payment\Model\Method\Cc
 	public function authorize(\Magento\Payment\Model\InfoInterface $payment, $amount)
 	{
 		$ticket = $this->getInfoInstance()->getAdditionalInformation('ticket');
-		$tokenize = $this->getInfoInstance()->getAdditionalInformation(VaultConfigProvider::IS_ACTIVE_CODE);
 		$token_public_hash = $this->getInfoInstance()->getAdditionalInformation('token_public_hash');
+
+		$auto_tokenize = $this->getConfigData('auto_tokenize_preauth');
+		$customer_selected_tokenize = $this->getInfoInstance()->getAdditionalInformation(VaultConfigProvider::IS_ACTIVE_CODE);
+
+		if ($auto_tokenize || $customer_selected_tokenize) {
+			$tokenize = true;
+		} else {
+			$tokenize = false;
+		}
+
 		try {
 			$order = $payment->getOrder();
 
@@ -154,10 +163,15 @@ class ClientTicket extends \Magento\Payment\Model\Method\Cc
 			if (empty($paymentToken)) {
 				$paymentToken = null;
 			}
-			$this->handleAuthResponse($response, $payment, $paymentToken);
+			$this->handleAuthResponse($response, $payment, $paymentToken, $auto_tokenize);
 		}
 
-		$payment->setTransactionId($response['ttid']);
+		$transaction_id = $response['ttid'];
+		if ($auto_tokenize && isset($response['token'])) {
+			$transaction_id .= "-" . $response['token'];
+		}
+
+		$payment->setTransactionId($transaction_id);
 		$payment->setIsTransactionClosed(false);
 
 		return $this;
@@ -166,10 +180,60 @@ class ClientTicket extends \Magento\Payment\Model\Method\Cc
 	public function capture(\Magento\Payment\Model\InfoInterface $payment, $amount)
 	{
 		$order = $payment->getOrder();
+
 		try {
-			$ttid = $payment->getParentTransactionId();
-			if (!empty($ttid)) {
-				$response = $this->monetraInterface->capture($ttid, $order, $amount);
+			$transaction_id = $payment->getParentTransactionId();
+
+			if (!empty($transaction_id)) {
+
+				if (strpos($transaction_id, "-") === false) {
+					$ttid = $transaction_id;
+				} else {
+					$transaction_id_parts = explode("-", $transaction_id);
+					$ttid = $transaction_id_parts[0];
+					$token = $transaction_id_parts[1];
+				}
+
+				$order_created_at = new \DateTime($order->getCreatedAt());
+				$now = new \DateTime();
+
+				$preauth_age_in_hours = $now->diff($order_created_at, true)->h;
+				$preauth_max_age_in_days = $this->getConfigData('preauth_max_age');
+
+				if ($preauth_age_in_hours > $preauth_max_age_in_days * 24) {
+
+					$account_data = ['ttid' => strval($ttid)];
+					$response = $this->monetraInterface->sale($account_data, $amount, $order);
+
+					if ($response['code'] === 'AUTH') {
+
+						$this->monetraInterface->void($ttid);
+
+						if (!empty($token)) {
+							$this->monetraInterface->deleteToken($token);
+						}
+
+					} elseif (($response['msoft_code'] === 'DATA_INVALIDMOD' 
+					|| $response['msoft_code'] === 'DATA_RECORDNOTFOUND')
+					&& !empty($token)) {
+
+						$account_data = ['token' => strval($token)];
+						$response = $this->monetraInterface->sale($account_data, $amount, $order);
+
+						if ($response['code'] === 'AUTH') {
+
+							$this->monetraInterface->deleteToken($token);
+
+						}
+
+					}
+
+				} else {
+
+					$response = $this->monetraInterface->capture($ttid, $order, $amount);
+
+				}
+
 			} else {
 				$ticket = $this->getInfoInstance()->getAdditionalInformation('ticket');
 				$tokenize = $this->getInfoInstance()->getAdditionalInformation(VaultConfigProvider::IS_ACTIVE_CODE);
@@ -271,9 +335,9 @@ class ClientTicket extends \Magento\Payment\Model\Method\Cc
 		return $this->_scopeConfig->getValue('payment/' . self::VAULT_METHOD_CODE . '/title');
 	}
 
-	private function handleAuthResponse($response, $payment, $paymentToken = null)
+	private function handleAuthResponse($response, $payment, $paymentToken = null, $auto_tokenized = false)
 	{
-		if (isset($response['token'])) {
+		if (isset($response['token']) && !$auto_tokenized) {
 			$paymentToken = $this->addTokenToVault($payment, $response);
 			$this->getInfoInstance()->setAdditionalInformation('token', $paymentToken->getGatewayToken());
 		} elseif (!empty($paymentToken)) {
