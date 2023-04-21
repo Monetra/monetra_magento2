@@ -187,13 +187,7 @@ class ClientTicket extends \Magento\Payment\Model\Method\Cc
 
 			if (!empty($transaction_id)) {
 
-				if (strpos($transaction_id, "-") === false) {
-					$ttid = $transaction_id;
-				} else {
-					$transaction_id_parts = explode("-", $transaction_id);
-					$ttid = $transaction_id_parts[0];
-					$token = $transaction_id_parts[1];
-				}
+				list($ttid, $token) = self::getTTIDAndTokenFromTransactionId($transaction_id);
 
 				$order_created_at = new \DateTime($order->getCreatedAt());
 				$now = new \DateTime();
@@ -283,7 +277,9 @@ class ClientTicket extends \Magento\Payment\Model\Method\Cc
 
 	public function void(\Magento\Payment\Model\InfoInterface $payment)
 	{
-		$ttid = $payment->getParentTransactionId();
+		$transaction_id = $payment->getParentTransactionId();
+
+		list($ttid, $token) = self::getTTIDAndTokenFromTransactionId($transaction_id);
 
 		try {
 			$response = $this->monetraInterface->void($ttid);
@@ -297,6 +293,8 @@ class ClientTicket extends \Magento\Payment\Model\Method\Cc
 				sprintf('Monetra void failed for TTID %d. Verbiage: %s', $ttid, $response['verbiage'])
 			);
 			throw new LocalizedException(__('Void request failed. Details: ' . $response['verbiage']));
+		} elseif (!empty($token)) {
+			$this->monetraInterface->deleteToken($token);
 		}
 
 		return $this;
@@ -304,7 +302,9 @@ class ClientTicket extends \Magento\Payment\Model\Method\Cc
 
 	public function refund(\Magento\Payment\Model\InfoInterface $payment, $amount)
 	{
-		$ttid = $payment->getParentTransactionId();
+		$transaction_id = $payment->getParentTransactionId();
+
+		list($ttid, $token) = self::getTTIDAndTokenFromTransactionId($transaction_id);
 
 		try {
 			$response = $this->monetraInterface->refund($ttid, $amount);
@@ -415,6 +415,19 @@ class ClientTicket extends \Magento\Payment\Model\Method\Cc
 	private function vaultIsActive()
 	{
 		return $this->_scopeConfig->getValue('payment/' . self::VAULT_METHOD_CODE . '/active');
+	}
+
+	private static function getTTIDAndTokenFromTransactionId($transaction_id)
+	{
+		if (strpos($transaction_id, "-") === false) {
+			$ttid = $transaction_id;
+			$token = null;
+		} else {
+			$transaction_id_parts = explode("-", $transaction_id);
+			$ttid = $transaction_id_parts[0];
+			$token = $transaction_id_parts[1];
+		}
+		return [$ttid, $token];
 	}
 
 }
