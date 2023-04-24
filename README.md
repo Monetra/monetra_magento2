@@ -18,7 +18,11 @@ Once the Monetra Module is installed on your Magento instance, you will need to 
 
 - **Enabled**: Must be set to "Yes" in order to use the Monetra PaymentFrame payment method.
 
-- **Payment Action**: If this is set to "Authorize Only", initial placement of an order will only authorize (not capture) the provided card. In other words, when an order is placed, the `sale` transaction sent to Monetra will include `capture=no`. If this option is set to "Authorize and Capture", the `sale` transaction will omit the `capture` parameter (which defaults to `yes`).
+- **Payment Action**: If this is set to "Authorize Only", initial placement of an order will only authorize (not capture) the provided card. In other words, when an order is placed, a `preauth` transaction will be sent to the payment server. If this option is set to "Authorize and Capture", a `sale` transaction will be sent to the payment server.
+
+- **Authorization Max Age (in days)**: (*Only appears if the Payment Action option is set to Authorize Only*) This setting indicates how long an authorization should be considered valid. If the order is completed/invoiced within this time period, a `preauthcomplete` transaction will be used to capture the existing authorization. Otherwise, a new `sale` transaction will be used, and the initial authorization will be voided.
+
+- **Auto-tokenize Authorizations**: (*Only appears if the Payment Action option is set to Authorize Only*) If this setting is enabled, all payment authorizations will be tokenized. This allows a longer time period in between the initial authorization and order completion, to handle situations where the authorization might otherwise expire, such as orders that take a long time to process.
 
 - **Title**: The name for the payment method that will be displayed on the user-facing checkout page.
 
