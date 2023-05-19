@@ -129,10 +129,10 @@ class MonetraInterface extends \Magento\Framework\App\Helper\AbstractHelper
 	public function getTokenExpirationDate($token)
 	{
 		$response = $this->request($this->credentials, 'GET', 'vault/account/' . $token);
-		if ($response['code'] !== 'SUCCESS') {
+		if (empty($response) || empty($response['expdate'])) {
 			return "";
 		}
-		return $response['report'][0]['expdate'];
+		return $response['expdate'];
 	}
 
 	public function deleteToken($token)

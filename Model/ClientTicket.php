@@ -164,11 +164,11 @@ class ClientTicket extends \Magento\Payment\Model\Method\Cc
 			if (empty($paymentToken)) {
 				$paymentToken = null;
 			}
-			$this->handleAuthResponse($response, $payment, $paymentToken, $auto_tokenize);
+			$this->handleAuthResponse($response, $payment, $paymentToken, $customer_selected_tokenize);
 		}
 
 		$transaction_id = $response['ttid'];
-		if ($auto_tokenize && isset($response['token'])) {
+		if ($auto_tokenize && !$customer_selected_tokenize && isset($response['token'])) {
 			$transaction_id .= "-" . $response['token'];
 		}
 
@@ -339,9 +339,9 @@ class ClientTicket extends \Magento\Payment\Model\Method\Cc
 		return $this->_scopeConfig->getValue('payment/' . self::VAULT_METHOD_CODE . '/title');
 	}
 
-	private function handleAuthResponse($response, $payment, $paymentToken = null, $auto_tokenized = false)
+	private function handleAuthResponse($response, $payment, $paymentToken = null, $customer_selected_tokenize = true)
 	{
-		if (isset($response['token']) && !$auto_tokenized) {
+		if (isset($response['token']) && $customer_selected_tokenize) {
 			$paymentToken = $this->addTokenToVault($payment, $response);
 			$this->getInfoInstance()->setAdditionalInformation('token', $paymentToken->getGatewayToken());
 		} elseif (!empty($paymentToken)) {
