@@ -281,7 +281,19 @@ class ClientTicket extends \Magento\Payment\Model\Method\Cc
 			$this->handleAuthResponse($response, $payment, $paymentToken);
 		}
 
-		$payment->setTransactionId($response['ttid']);
+		$transaction_id = $response['ttid'];
+
+		// Get Transaction Details
+		$transaction = $this->monetraInterface->transaction($transaction_id);
+		$expDate = \DateTime::createFromFormat('my', $transaction['expdate'] ?? '0101');
+		$expDateMonth = $expDate->format('n') ?? date('n');
+		$expDateYear = $expDate->format('Y') ?? date('Y');
+
+		$payment->setTransactionId($transaction_id);
+		$payment->setCcApproval($transaction['cv'] ?? 'GOOD');
+		$payment->setCcAvsStatus($transaction['avs'] ?? 'GOOD');
+		$payment->setCcExpMonth($expDateMonth);
+		$payment->setCcExpYear($expDateYear);
 
 		return $this;
 	}
