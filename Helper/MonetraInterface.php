@@ -185,6 +185,11 @@ class MonetraInterface extends \Magento\Framework\App\Helper\AbstractHelper
 		}
 	}
 
+	public function transaction($ttid)
+	{
+		return $this->request('GET', 'transaction/' . $ttid);
+	}
+
 	public function request($credentials, $method, $path, $data = [])
 	{
 		$url = $this->origin . '/api/v2/' . $path;
