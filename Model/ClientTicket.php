@@ -172,6 +172,8 @@ class ClientTicket extends \Magento\Payment\Model\Method\Cc
 			$transaction_id .= "-" . $response['token'];
 		}
 
+		$this->handleSignify($transaction_id, $payment);
+
 		$payment->setTransactionId($transaction_id);
 		$payment->setIsTransactionClosed(false);
 
@@ -269,6 +271,8 @@ class ClientTicket extends \Magento\Payment\Model\Method\Cc
 			}
 			$this->handleAuthResponse($response, $payment, $paymentToken);
 		}
+
+		$this->handleSignify($response['ttid'], $payment);
 
 		$payment->setTransactionId($response['ttid']);
 
@@ -428,6 +432,24 @@ class ClientTicket extends \Magento\Payment\Model\Method\Cc
 			$token = $transaction_id_parts[1];
 		}
 		return [$ttid, $token];
+	}
+
+	private function handleSignify($transaction_id, $payment)
+	{
+		// Maping 
+		$CcvStatusMap = ['GOOD' => 'M', 'BAD' => 'N', 'UNKNOWN' => 'M'];
+		$AvsStatusMap = ['GOOD' => 'Y', 'BAD' => 'N', 'STREET' => 'Z', 'ZIP' => 'A', 'UNKNOWN' => 'Y'];
+
+		// Get Transaction Details
+		$transaction = $this->monetraInterface->transaction($transaction_id);
+		$expDate = \DateTime::createFromFormat('my', $transaction['expdate'] ?? '0101');
+		$expDateMonth = $expDate->format('n') ?? date('n');
+		$expDateYear = $expDate->format('Y') ?? date('Y');
+
+		$payment->setCcCidStatus($CcvStatusMap[$transaction['cv'] ?? 'BAD']);
+		$payment->setCcAvsStatus($AvsStatusMap[$transaction['avs'] ?? 'BAD']);
+		$payment->setCcExpMonth($expDateMonth);
+		$payment->setCcExpYear($expDateYear);
 	}
 
 }
